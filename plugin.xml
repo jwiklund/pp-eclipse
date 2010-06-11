@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension point="org.eclipse.ui.actionSets">
+      <actionSet label="Sample Action Set" visible="true" id="Browse.actionSet">
+         <action 
+               label="Sample Action" 
+         	   icon="icons/sample.gif"
+               class="browse.actions.SampleAction" 
+               id="browse.actions.SampleAction"
+               definitionId="org.eclipse.ui.browse.find">
+         </action>
+      </actionSet>
+   </extension>
+   <extension point="org.eclipse.ui.commands">
+   	<command id="browse.command.SampleCommand" name="Browse" defaultHandler="browse.command.SampleCommand"> 	
+	</command>
+   </extension>
+   
+   <extension point="org.eclipse.ui.bindings">
+      <key sequence="Ctrl+I" commandId="browse.command.SampleCommand" schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+	  </key>
+   </extension>
+
+</plugin>
