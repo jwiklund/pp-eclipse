@@ -15,16 +15,16 @@ import org.eclipse.ui.ide.IDE;
 
 import browse.Activator;
 import browse.domain.InputTemplate;
-import browse.ui.dialogs.FilteredContentXmlDialog;
+import browse.ui.dialogs.InputTemplateSelectionDialog;
 
-public class BrowseInputTemplateCommand extends AbstractHandler {
+public class OpenInputTemplateCommand extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent arg0) throws ExecutionException
     {
         Shell shell = new Shell();
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-        FilteredContentXmlDialog dialog = new FilteredContentXmlDialog(shell, Activator.getDefault().getRepository());
+        InputTemplateSelectionDialog dialog = new InputTemplateSelectionDialog(shell, Activator.getDefault().getRepository());
         dialog.setInitialPattern("p.");
         dialog.open();
         Object[] result = dialog.getResult();

@@ -5,16 +5,16 @@
    <extension point="org.eclipse.ui.commands">
    	<command
           categoryId="org.eclipse.jdt.ui.category.source"
-          defaultHandler="browse.command.BrowseInputTemplateCommand"
+          defaultHandler="browse.command.OpenInputTemplateCommand"
           description="Open Input Template"
-          id="browse.command.BrowseInputTemplateCommand"
+          id="browse.command.OpenInputTemplateCommand"
           name="Browse"> 	
 	</command>
    </extension>
    
    <extension point="org.eclipse.ui.bindings">
       <key
-            commandId="browse.command.BrowseInputTemplateCommand"
+            commandId="browse.command.OpenInputTemplateCommand"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Ctrl+Shift+I">
 	  </key>

@@ -18,21 +18,22 @@ import browse.Activator;
 import browse.domain.InputTemplate;
 import browse.domain.InputTemplateRepository;
 
-public class FilteredContentXmlDialog extends FilteredItemsSelectionDialog {
+public class InputTemplateSelectionDialog extends FilteredItemsSelectionDialog {
 
     private InputTemplateRepository repository;
 
-    public FilteredContentXmlDialog(Shell shell, InputTemplateRepository inputTemplateRepository)
+    public InputTemplateSelectionDialog(Shell shell, InputTemplateRepository inputTemplateRepository)
     {
         super(shell, false);
         setTitle("Filtered ContentXml Dialog");
-        setSelectionHistory(new ResourceSelectionHistory());
+        setSelectionHistory(new InputTemplateSelectionHistory());
         repository = inputTemplateRepository;
+        setListLabelProvider(new InputTemplateListLabelProvider(this));
     }
     
-    private class ResourceSelectionHistory extends SelectionHistory {
+    class InputTemplateSelectionHistory extends SelectionHistory {
         protected Object restoreItemFromMemento(IMemento element) {
-            return null; 
+            return null;
         }
         protected void storeItemToMemento(Object item, IMemento element) {
         }
