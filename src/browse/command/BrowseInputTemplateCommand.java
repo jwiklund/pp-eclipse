@@ -28,22 +28,25 @@ public class BrowseInputTemplateCommand extends AbstractHandler {
         dialog.setInitialPattern("p.");
         dialog.open();
         Object[] result = dialog.getResult();
+        if (result == null) {
+            return null;
+        }
         InputTemplate inputTemplate = (InputTemplate) result[0];
-        if (inputTemplate != null) {
-            try {
-                IFile file = (IFile) root.findMember(inputTemplate.path);
-                IMarker marker = file.createMarker(IMarker.TEXT);
-                marker.setAttribute(IMarker.LINE_NUMBER, inputTemplate.line);
-                IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), marker);
-                marker.delete();
-            } catch (PartInitException e) {
-                e.printStackTrace();
-            } catch (CoreException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+        if (inputTemplate == null) {
+            return null;
+        }
+        try {
+            IFile file = (IFile) root.findMember(inputTemplate.path);
+            IMarker marker = file.createMarker(IMarker.TEXT);
+            marker.setAttribute(IMarker.LINE_NUMBER, inputTemplate.line);
+            IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), marker);
+            marker.delete();
+        } catch (PartInitException e) {
+            e.printStackTrace();
+        } catch (CoreException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
         return null;
     }
-
 }
