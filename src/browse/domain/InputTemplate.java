@@ -13,7 +13,7 @@ public class InputTemplate implements Comparable<InputTemplate>
 {   
     public final String inputTemplate;
     public final IPath path;
-    public final int line;
+    public int line;
     
     public InputTemplate(String inputTemplate, IPath path, int line)
     {

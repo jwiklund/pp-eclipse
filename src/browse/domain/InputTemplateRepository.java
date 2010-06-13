@@ -12,8 +12,10 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
@@ -23,13 +25,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class InputTemplateRepository {
 
 	private Logger logger;
-	private IResource root;
+	private IContainer root;
 	
 	private List<InputTemplate> templates = null;
 	private int estimatedSourceFiles = -1;
 	private Pattern xmlFiles = Pattern.compile(".*\\.xml");
+	private InputTemplateChangeListener resourceListener = new InputTemplateChangeListener(this);
 	
-	public InputTemplateRepository(Logger logger, IResource root) 
+	public InputTemplateRepository(Logger logger, IContainer root) 
 	{
 		this.logger = logger;
 		this.root = root;
@@ -37,9 +40,9 @@ public class InputTemplateRepository {
 
 	public synchronized int estimatedXMLFiles() 
 	{
-		if (estimatedSourceFiles == -1) {
-			estimatedSourceFiles = countSourceFiles(logger, root, xmlFiles);
-		}
+	    if (estimatedSourceFiles == -1) {
+	        estimatedSourceFiles = countSourceFiles(logger, root, xmlFiles);
+	    }
 		return estimatedSourceFiles;
 	}
 	
@@ -50,6 +53,35 @@ public class InputTemplateRepository {
 	    }
 	    return templates;
 	}
+	
+	    
+	public synchronized boolean validate(InputTemplate template) {
+	    List<InputTemplate> templatesInFile = null;
+	    if (templates == null) {
+	        IResource resource = root.findMember(template.path);
+	        if (resource == null) {
+	            return false;
+	        }
+            templatesInFile = readTemplates(logger, null, resource, xmlFiles);
+	    } else {
+	        templatesInFile = templates;
+	    }
+	    for (InputTemplate templateInFile : templatesInFile) {
+	        if (templateInFile.equals(template)) {
+	            template.line = templateInFile.line;
+	            return true;
+	        }
+	    }
+        return false;
+    }
+    
+    public synchronized void refresh() {
+        templates = null;
+    }
+
+    public IResourceChangeListener getResourceListener() {
+        return resourceListener;
+    }
 
 	private static List<InputTemplate> readTemplates(final Logger logger, final IProgressMonitor progress, final IResource resource, final Pattern pattern) 
 	{
@@ -59,7 +91,9 @@ public class InputTemplateRepository {
             public boolean visit(IResourceProxy proxy) throws CoreException {
                 if (pattern.matcher(proxy.getName()).matches()) {
                     readTemplates(logger, proxy, result);
-                    progress.worked(1);
+                    if (progress != null) {
+                        progress.worked(1);
+                    }
                 }
                 return true;
             }
@@ -155,8 +189,4 @@ public class InputTemplateRepository {
 		}
 		return result[0];
 	}
-	
-	
-	
-	
 }

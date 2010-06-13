@@ -4,14 +4,14 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IContainer;
 import org.junit.Before;
 import org.junit.Test;
 
 public class InputTemplateRepositoryTest {
 	
 	InputTemplateRepository target;
-	IResource root;
+	IContainer root;
 	
 	@Before
 	public void setup() 
@@ -20,6 +20,7 @@ public class InputTemplateRepositoryTest {
 		                          DummyResource.empty("empty.xml"), 
 								  DummyResource.inputTemplate("input.xml", "p.InputTemplate"),
 								  DummyResource.content("content.xml", "p.InputTemplateBootstrap"));
+		root = DummyResource.rootWithUpdate(root, DummyResource.inputTemplate("input.xml", "p.InputTemplate2"));
 		target = new InputTemplateRepository(null, root);
 	}
 
@@ -39,6 +40,25 @@ public class InputTemplateRepositoryTest {
 	@Test
 	public void templates_should_count_files_worked()
 	{
+	    DummyCounter counter = DummyCounter.counter();
+	    target.templates(counter);
+	    assertEquals(3, counter.count());
+	}
+	
+	@Test
+	public void templates_should_only_work_if_changed()
+	{
+	    target.templates(DummyCounter.counter());
+	    DummyCounter counter = DummyCounter.counter();
+	    target.templates(counter);
+	    assertEquals(0, counter.count());
+	}
+	
+	@Test
+	public void refresh_should_refresh_all()
+	{
+	    target.templates(DummyCounter.counter());
+	    target.refresh();
 	    DummyCounter counter = DummyCounter.counter();
 	    target.templates(counter);
 	    assertEquals(3, counter.count());

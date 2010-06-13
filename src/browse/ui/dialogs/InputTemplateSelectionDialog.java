@@ -67,10 +67,11 @@ public class InputTemplateSelectionDialog extends FilteredItemsSelectionDialog {
             @Override
             public boolean isConsistentItem(Object arg0)
             {
-                if (arg0 == null) {
-                    return false;
+                if (arg0 instanceof InputTemplate) {
+                    InputTemplate template = (InputTemplate) arg0;
+                    return repository.validate(template);
                 }
-                return true;
+                return false;
             }
         };
     }

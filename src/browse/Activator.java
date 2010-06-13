@@ -30,10 +30,7 @@ public class Activator extends AbstractUIPlugin {
     {
         Logger logger = Logger.getLogger(PLUGIN_ID);
         repository = new InputTemplateRepository(logger, getWorkspaceRoot());
-//        IResourceChangeListener listener = new MyResourceChangeReporter();
-//        ResourcesPlugin.getWorkspace().addResourceChangeListener(
-//           listener, IResourceChangeEvent.POST_CHANGE);
-        
+       
         // And import
         
 //        The copies in the build directory should be marked as derived (IResource.setDerived()). 
@@ -60,6 +57,7 @@ public class Activator extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception
     {
         super.start(context);
+        ResourcesPlugin.getWorkspace().addResourceChangeListener(repository.getResourceListener());
         plugin = this;
     }
 
@@ -72,6 +70,7 @@ public class Activator extends AbstractUIPlugin {
      */
     public void stop(BundleContext context) throws Exception
     {
+        ResourcesPlugin.getWorkspace().removeResourceChangeListener(repository.getResourceListener());
         plugin = null;
         super.stop(context);
     }

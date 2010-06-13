@@ -4,10 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 public class DummyResource 
 {
@@ -16,8 +18,8 @@ public class DummyResource
 	{
 	}
 	
-	public static IResource root(final DummyResource.Entry... entries) {
-		return new BaseDummyResource() {
+	public static IContainer root(final DummyResource.Entry... entries) {
+		return new BaseDummyContainer() {
 			@Override
 			public void accept(IResourceProxyVisitor visitor, int memberFlags) 
 				throws CoreException 
@@ -28,6 +30,36 @@ public class DummyResource
 			}
 		};
 	}
+	
+    public static IContainer rootWithUpdate(final IContainer root, final Entry... updateTemplates) 
+    {
+        return new BaseDummyContainer() {
+            @Override
+            public void accept(IResourceProxyVisitor visitor, int memberFlags) throws CoreException 
+            {
+                root.accept(visitor, memberFlags);
+            }
+            
+            @Override
+            public IResource findMember(IPath path) 
+            {
+                for (Entry entry : updateTemplates) {
+                    final Entry theEntry = entry;
+                    String fullPath = "/" + entry.name;
+                    if (fullPath.equals(path.toString())) {
+                        return new BaseDummyResource() {
+                            @Override
+                            public IResourceProxy createProxy() {
+                                return theEntry.proxy();
+                            }
+                        };
+                    }
+                }
+                return null;
+            }
+        };
+    }
+
 	
 	public static Entry empty(String filename) 
 	{
