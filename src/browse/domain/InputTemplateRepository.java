@@ -6,7 +6,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -15,6 +19,7 @@ import java.util.regex.Pattern;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
@@ -28,9 +33,11 @@ public class InputTemplateRepository {
 	private IContainer root;
 	
 	private List<InputTemplate> templates = null;
+	private Map<IPath, TemplateDefinition> templateDefinitions = new HashMap<IPath, TemplateDefinition>();
+	private volatile boolean dirty;
 	private int estimatedSourceFiles = -1;
 	private Pattern xmlFiles = Pattern.compile(".*\\.xml");
-	private InputTemplateChangeListener resourceListener = new InputTemplateChangeListener(this);
+	private IResourceChangeListener resourceListener = createChangeListener();
 	
 	public InputTemplateRepository(Logger logger, IContainer root) 
 	{
@@ -38,10 +45,10 @@ public class InputTemplateRepository {
 		this.root = root;
 	}
 
-	public synchronized int estimatedXMLFiles() 
+    public synchronized int estimatedXMLFiles() 
 	{
 	    if (estimatedSourceFiles == -1) {
-	        estimatedSourceFiles = countSourceFiles(logger, root, xmlFiles);
+	        estimatedSourceFiles = countSourceFiles();
 	    }
 		return estimatedSourceFiles;
 	}
@@ -49,48 +56,60 @@ public class InputTemplateRepository {
 	public synchronized List<InputTemplate> templates(IProgressMonitor progress) 
 	{
 	    if (templates == null) {
-	        templates = readTemplates(logger, progress, root, xmlFiles);
+	        dirty = false;
+	        templates = readTemplates(progress);
+	    } else if (dirty) {
+	        dirty = false;
+	        templates = readTemplates(progress);
 	    }
 	    return templates;
 	}
 	
 	    
 	public synchronized boolean validate(InputTemplate template) {
-	    List<InputTemplate> templatesInFile = null;
-	    if (templates == null) {
+	    TemplateDefinition def = templateDefinitions.get(template.path);
+	    if (def == null) {
 	        IResource resource = root.findMember(template.path);
 	        if (resource == null) {
 	            return false;
 	        }
-            templatesInFile = readTemplates(logger, null, resource, xmlFiles);
-	    } else {
-	        templatesInFile = templates;
+	        def = readTemplates(resource.createProxy());
 	    }
-	    for (InputTemplate templateInFile : templatesInFile) {
+	    if (def == null) {
+	        return false;
+	    }
+	    for (InputTemplate templateInFile : def.templates) {
 	        if (templateInFile.equals(template)) {
-	            template.line = templateInFile.line;
-	            return true;
-	        }
+                template.line = templateInFile.line;
+                return true;
+            }
 	    }
         return false;
     }
     
-    public synchronized void refresh() {
-        templates = null;
+    public synchronized void refresh() 
+    {
+        dirty = true;
     }
 
-    public IResourceChangeListener getResourceListener() {
+    public IResourceChangeListener getResourceListener() 
+    {
         return resourceListener;
     }
 
-	private static List<InputTemplate> readTemplates(final Logger logger, final IProgressMonitor progress, final IResource resource, final Pattern pattern) 
+	private List<InputTemplate> readTemplates(final IProgressMonitor progress) 
 	{
 	    final List<InputTemplate> result = new ArrayList<InputTemplate>();
+	    final List<IPath> visited = new ArrayList<IPath>();
 	    IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
             @Override
             public boolean visit(IResourceProxy proxy) throws CoreException {
-                if (pattern.matcher(proxy.getName()).matches()) {
-                    readTemplates(logger, proxy, result);
+                if (xmlFiles.matcher(proxy.getName()).matches()) {
+                    TemplateDefinition def = readTemplates(proxy);
+                    if (def != null) {
+                        result.addAll(def.templates);
+                        visited.add(proxy.requestFullPath());
+                    }
                     if (progress != null) {
                         progress.worked(1);
                     }
@@ -99,18 +118,30 @@ public class InputTemplateRepository {
             }
         };
         try {
-            resource.accept(visitor, 0);
+            root.accept(visitor, 0);
         } catch (CoreException e) {
             logger.log(Level.FINE, "readTemplates failed", e);
+        }
+        HashSet<IPath> allKeys = new HashSet<IPath>(templateDefinitions.keySet());
+        allKeys.removeAll(visited);
+        for (IPath path : allKeys) {
+            templateDefinitions.remove(path);
         }
 	    return result;
     }
 	
-	private static void readTemplates(Logger logger, IResourceProxy proxy, List<InputTemplate> result) 
+	private TemplateDefinition readTemplates(IResourceProxy proxy) 
 	{
 	    if (proxy.getType() != IResource.FILE) 
-	        return ;
+	        return null;
 	    IPath fullPath = proxy.requestFullPath();
+        TemplateDefinition cached = templateDefinitions.get(fullPath);
+	    if (cached != null) {
+	        if (cached.modified >= proxy.getModificationStamp()) {
+	            return cached;
+	        }
+	        templateDefinitions.remove(fullPath);
+	    }
 	    IFile file = (IFile) proxy.requestResource();
 	    InputStream contents = null;
         try {
@@ -119,7 +150,7 @@ public class InputTemplateRepository {
             logger.log(Level.FINER, "Could not get input stream for resource", e);
         }
         if (contents == null) {
-            return ;
+            return null;
         }
         String charset = "UTF-8";
         try {
@@ -132,21 +163,27 @@ public class InputTemplateRepository {
 	        int[] lineno = new int[1];
 	        String topElement = readTopElement(reader, lineno);
 	        if (!"template-definition".equalsIgnoreCase(topElement)) {
-	            return;
+	            return null;
 	        }
 	        String line = null;
 	        Pattern pattern = Pattern.compile("<input-template[^>]+name=\"([^\"]+)\"");
+	        List<InputTemplate> templates = new ArrayList<InputTemplate>();
 	        while ((line = reader.readLine()) != null) {
 	            lineno[0] = lineno[0] + 1;
 	            Matcher matcher = pattern.matcher(line);
 	            while (matcher.find()) {
-	                result.add(new InputTemplate(matcher.group(1), fullPath, lineno[0]));
+	                templates.add(new InputTemplate(matcher.group(1), fullPath, lineno[0]));
 	            }
 	        }
+	        TemplateDefinition templateDefinition = new TemplateDefinition(fullPath, file.getModificationStamp(), templates);
+	        templateDefinitions.put(fullPath, templateDefinition);
+            return templateDefinition;
 	    } catch (UnsupportedEncodingException e) {
 	        logger.log(Level.FINE, "Bad charset " + charset, e);
+	        return null;
         } catch (IOException e) {
             logger.log(Level.FINER, "Failed reading file", e);
+            return null;
         } finally {
 	        try {
 	            contents.close();
@@ -155,7 +192,6 @@ public class InputTemplateRepository {
             }
 	    }
 	}
-
 
     private static String readTopElement(BufferedReader reader, int[] lineno) throws IOException {
         Pattern pattern = Pattern.compile("<([^?>][^ >]+)[^>]+>");
@@ -170,23 +206,32 @@ public class InputTemplateRepository {
         return null;
     }
 
-    private static int countSourceFiles(final Logger logger, final IResource resource, final Pattern pattern) 
+    private int countSourceFiles() 
 	{
 		final int[] result = new int[1];
 		IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
 			@Override
 			public boolean visit(IResourceProxy proxy) throws CoreException {
-				if (pattern.matcher(proxy.getName()).matches()) {
+				if (xmlFiles.matcher(proxy.getName()).matches()) {
 					result[0] = result[0] + 1;
 				}
 				return true;
 			}
 		};
 		try {
-			resource.accept(visitor, 0);
+			root.accept(visitor, 0);
 		} catch (CoreException e) {
 			logger.log(Level.FINE, "countSourceFiles failed", e);
 		}
 		return result[0];
 	}
+    
+    private IResourceChangeListener createChangeListener() {
+        return new IResourceChangeListener() {
+            @Override
+            public void resourceChanged(IResourceChangeEvent event) {
+                refresh();
+            }
+        };
+    }
 }
