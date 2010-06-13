@@ -3,7 +3,6 @@ package browse.ui.dialogs;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -16,20 +15,19 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 
 import browse.Activator;
-import browse.ContentXmlFile;
-import browse.InputTemplateResources;
-import browse.ui.InputTemplate;
+import browse.domain.InputTemplate;
+import browse.domain.InputTemplateRepository;
 
 public class FilteredContentXmlDialog extends FilteredItemsSelectionDialog {
 
-    private InputTemplateResources resourcesProvider;
+    private InputTemplateRepository repository;
 
-    public FilteredContentXmlDialog(Shell shell, IWorkspaceRoot root)
+    public FilteredContentXmlDialog(Shell shell, InputTemplateRepository inputTemplateRepository)
     {
         super(shell, false);
         setTitle("Filtered ContentXml Dialog");
         setSelectionHistory(new ResourceSelectionHistory());
-        resourcesProvider = new InputTemplateResources(root);
+        repository = inputTemplateRepository;
     }
     
     private class ResourceSelectionHistory extends SelectionHistory {
@@ -72,16 +70,14 @@ public class FilteredContentXmlDialog extends FilteredItemsSelectionDialog {
         ItemsFilter filter, IProgressMonitor progressMonitor) throws CoreException
     {
         progressMonitor.beginTask("Initializing", 1);
-        List<ContentXmlFile> resources = resourcesProvider.contentXMLFiles();
+        int workToDo = repository.estimatedXMLFiles();
         progressMonitor.worked(1);
         progressMonitor.done();
-        progressMonitor.beginTask("Searching", resources.size());
-        for (ContentXmlFile file : resources) {
-            List<InputTemplate> templates = resourcesProvider.inputTemplates(file);
-            for (InputTemplate template : templates) {
-                contentProvider.add(template, filter);
-            }
-            progressMonitor.worked(1);
+        progressMonitor.beginTask("Searching", workToDo);
+        List<InputTemplate> templates = repository.templates(progressMonitor);
+        progressMonitor.done();
+        for (InputTemplate template : templates) {
+            contentProvider.add(template, filter);
         }
         progressMonitor.done();
     }
@@ -111,7 +107,7 @@ public class FilteredContentXmlDialog extends FilteredItemsSelectionDialog {
             @Override
             public int compare(Object o1, Object o2)
             {
-                return String.valueOf(((InputTemplate) o1).inputTemplate).compareTo(((InputTemplate) o2).inputTemplate);
+                return ((InputTemplate) o1).compareTo((InputTemplate) o2);
             }
         };
     }

@@ -13,17 +13,18 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
-import browse.ui.InputTemplate;
+import browse.Activator;
+import browse.domain.InputTemplate;
 import browse.ui.dialogs.FilteredContentXmlDialog;
 
-public class SampleCommand extends AbstractHandler {
+public class BrowseInputTemplateCommand extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent arg0) throws ExecutionException
     {
         Shell shell = new Shell();
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-        FilteredContentXmlDialog dialog = new FilteredContentXmlDialog(shell, root);
+        FilteredContentXmlDialog dialog = new FilteredContentXmlDialog(shell, Activator.getDefault().getRepository());
         dialog.setInitialPattern("p.");
         dialog.open();
         Object[] result = dialog.getResult();
