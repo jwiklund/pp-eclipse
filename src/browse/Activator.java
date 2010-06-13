@@ -2,6 +2,7 @@ package browse;
 
 import java.util.logging.Logger;
 
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -28,7 +29,7 @@ public class Activator extends AbstractUIPlugin {
     public Activator()
     {
         Logger logger = Logger.getLogger(PLUGIN_ID);
-        repository = new InputTemplateRepository(logger, ResourcesPlugin.getWorkspace().getRoot());
+        repository = new InputTemplateRepository(logger, getWorkspaceRoot());
 //        IResourceChangeListener listener = new MyResourceChangeReporter();
 //        ResourcesPlugin.getWorkspace().addResourceChangeListener(
 //           listener, IResourceChangeEvent.POST_CHANGE);
@@ -38,6 +39,10 @@ public class Activator extends AbstractUIPlugin {
 //        The copies in the build directory should be marked as derived (IResource.setDerived()). 
 //        Derived resources are then filtered out of the open resource dialog. Whoever is copying those resources should be marking the 
 //        copies as derived - the Java builder does this, for example.
+    }
+
+    public IWorkspaceRoot getWorkspaceRoot() {
+        return ResourcesPlugin.getWorkspace().getRoot();
     }
     
     public InputTemplateRepository getRepository()

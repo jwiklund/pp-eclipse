@@ -24,7 +24,8 @@ public class OpenInputTemplateCommand extends AbstractHandler {
     {
         Shell shell = new Shell();
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-        InputTemplateSelectionDialog dialog = new InputTemplateSelectionDialog(shell, Activator.getDefault().getRepository());
+        Activator activator = Activator.getDefault();
+        InputTemplateSelectionDialog dialog = new InputTemplateSelectionDialog(shell, activator.getWorkspaceRoot(), activator.getRepository());
         dialog.setInitialPattern("p.");
         dialog.open();
         Object[] result = dialog.getResult();

@@ -3,6 +3,7 @@ package browse.ui.dialogs;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -21,21 +22,26 @@ import browse.domain.InputTemplateRepository;
 public class InputTemplateSelectionDialog extends FilteredItemsSelectionDialog {
 
     private InputTemplateRepository repository;
+    private IContainer root;
 
-    public InputTemplateSelectionDialog(Shell shell, InputTemplateRepository inputTemplateRepository)
+    public InputTemplateSelectionDialog(Shell shell, IContainer root, InputTemplateRepository repository)
     {
         super(shell, false);
+        this.repository = repository;
+        this.root = root;
         setTitle("Filtered ContentXml Dialog");
         setSelectionHistory(new InputTemplateSelectionHistory());
-        repository = inputTemplateRepository;
         setListLabelProvider(new InputTemplateListLabelProvider(this));
     }
     
     class InputTemplateSelectionHistory extends SelectionHistory {
         protected Object restoreItemFromMemento(IMemento element) {
-            return null;
+            return InputTemplate.restore(root, element);
         }
         protected void storeItemToMemento(Object item, IMemento element) {
+            if (item instanceof InputTemplate) {
+                InputTemplate.store((InputTemplate) item, element);
+            }
         }
     }
 
@@ -61,6 +67,9 @@ public class InputTemplateSelectionDialog extends FilteredItemsSelectionDialog {
             @Override
             public boolean isConsistentItem(Object arg0)
             {
+                if (arg0 == null) {
+                    return false;
+                }
                 return true;
             }
         };

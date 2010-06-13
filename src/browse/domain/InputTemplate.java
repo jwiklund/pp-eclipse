@@ -1,6 +1,9 @@
 package browse.domain;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.ui.IMemento;
 
 /**
  * @author Jonas Wiklund
@@ -64,5 +67,24 @@ public class InputTemplate implements Comparable<InputTemplate>
         } else if (!path.toString().equals(other.path == null ? null : other.path.toString()))
             return false;
         return true;
+    }
+
+
+    public static InputTemplate restore(IContainer root, IMemento element) {       
+        String inputTemplate = element.getString("inputTemplate");
+        String fullPath = element.getString("fullPath");
+        Integer lineno = element.getInteger("lineno");
+        if (inputTemplate == null || fullPath == null || lineno == null)
+            return null;
+        Path path = new Path(fullPath);
+        if (root.findMember(path) == null)
+            return null;
+        return new InputTemplate(inputTemplate, path, lineno);
+    }
+
+    public static void store(InputTemplate item, IMemento element) {
+        element.putString("inputTemplate", item.inputTemplate);
+        element.putString("fullPath", item.path.toString());
+        element.putInteger("lineno", item.line);
     }
 }
