@@ -8,6 +8,10 @@ import org.eclipse.core.resources.IContainer;
 import org.junit.Before;
 import org.junit.Test;
 
+import browse.dummy.DummyCounter;
+import browse.dummy.DummyPath;
+import browse.dummy.DummyResource;
+
 public class InputTemplateRepositoryTest {
 	
 	InputTemplateRepository target;
@@ -17,7 +21,7 @@ public class InputTemplateRepositoryTest {
 	public void setup() 
 	{
 		root = DummyResource.root(DummyResource.empty("something.java"),
-		                          DummyResource.empty("empty.xml"), 
+								  DummyResource.empty("empty.xml"), 
 								  DummyResource.inputTemplate("input.xml", "p.InputTemplate"),
 								  DummyResource.content("content.xml", "p.InputTemplateBootstrap"));
 		root = DummyResource.rootWithUpdate(root, DummyResource.inputTemplate("input.xml", "p.InputTemplate2"));

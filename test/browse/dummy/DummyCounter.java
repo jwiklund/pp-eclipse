@@ -1,4 +1,4 @@
-package browse.domain;
+package browse.dummy;
 
 public class DummyCounter extends BaseDummyProgressMonitor {
 

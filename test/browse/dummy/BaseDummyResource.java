@@ -1,13 +1,9 @@
-package browse.domain;
+package browse.dummy;
 
-import java.io.InputStream;
-import java.io.Reader;
 import java.net.URI;
 import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IProject;
@@ -22,10 +18,27 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
-public class BaseDummyFile implements IFile {
+class BaseDummyResource implements IResource {
+
+	@Override
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+
+		return null;
+	}
+
+	@Override
+	public boolean contains(ISchedulingRule rule) {
+
+		return false;
+	}
+
+	@Override
+	public boolean isConflicting(ISchedulingRule rule) {
+
+		return false;
+	}
 
 	@Override
 	public void accept(IResourceProxyVisitor visitor, int memberFlags)
@@ -36,13 +49,11 @@ public class BaseDummyFile implements IFile {
 	@Override
 	public void accept(IResourceVisitor visitor) throws CoreException {
 
-
 	}
 
 	@Override
 	public void accept(IResourceVisitor visitor, int depth,
 			boolean includePhantoms) throws CoreException {
-
 
 	}
 
@@ -50,12 +61,10 @@ public class BaseDummyFile implements IFile {
 	public void accept(IResourceVisitor visitor, int depth, int memberFlags)
 			throws CoreException {
 
-
 	}
 
 	@Override
 	public void clearHistory(IProgressMonitor monitor) throws CoreException {
-
 
 	}
 
@@ -63,13 +72,11 @@ public class BaseDummyFile implements IFile {
 	public void copy(IPath destination, boolean force, IProgressMonitor monitor)
 			throws CoreException {
 
-
 	}
 
 	@Override
 	public void copy(IPath destination, int updateFlags,
 			IProgressMonitor monitor) throws CoreException {
-
 
 	}
 
@@ -77,13 +84,11 @@ public class BaseDummyFile implements IFile {
 	public void copy(IProjectDescription description, boolean force,
 			IProgressMonitor monitor) throws CoreException {
 
-
 	}
 
 	@Override
 	public void copy(IProjectDescription description, int updateFlags,
 			IProgressMonitor monitor) throws CoreException {
-
 
 	}
 
@@ -103,20 +108,17 @@ public class BaseDummyFile implements IFile {
 	public void delete(boolean force, IProgressMonitor monitor)
 			throws CoreException {
 
-
 	}
 
 	@Override
 	public void delete(int updateFlags, IProgressMonitor monitor)
 			throws CoreException {
 
-
 	}
 
 	@Override
 	public void deleteMarkers(String type, boolean includeSubtypes, int depth)
 			throws CoreException {
-
 
 	}
 
@@ -153,6 +155,12 @@ public class BaseDummyFile implements IFile {
 	}
 
 	@Override
+	public IPath getFullPath() {
+
+		return null;
+	}
+
+	@Override
 	public long getLocalTimeStamp() {
 
 		return 0;
@@ -180,6 +188,12 @@ public class BaseDummyFile implements IFile {
 	public long getModificationStamp() {
 
 		return 0;
+	}
+
+	@Override
+	public String getName() {
+
+		return null;
 	}
 
 	@Override
@@ -252,7 +266,8 @@ public class BaseDummyFile implements IFile {
 
 	@Override
 	public int getType() {
-	    return IResource.FILE;
+
+		return 0;
 	}
 
 	@Override
@@ -322,6 +337,12 @@ public class BaseDummyFile implements IFile {
 	}
 
 	@Override
+	public boolean isReadOnly() {
+
+		return false;
+	}
+
+	@Override
 	public boolean isSynchronized(int depth) {
 
 		return false;
@@ -343,13 +364,11 @@ public class BaseDummyFile implements IFile {
 	public void move(IPath destination, boolean force, IProgressMonitor monitor)
 			throws CoreException {
 
-
 	}
 
 	@Override
 	public void move(IPath destination, int updateFlags,
 			IProgressMonitor monitor) throws CoreException {
-
 
 	}
 
@@ -357,13 +376,11 @@ public class BaseDummyFile implements IFile {
 	public void move(IProjectDescription description, boolean force,
 			boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 
-
 	}
 
 	@Override
 	public void move(IProjectDescription description, int updateFlags,
 			IProgressMonitor monitor) throws CoreException {
-
 
 	}
 
@@ -371,18 +388,15 @@ public class BaseDummyFile implements IFile {
 	public void refreshLocal(int depth, IProgressMonitor monitor)
 			throws CoreException {
 
-
 	}
 
 	@Override
 	public void revertModificationStamp(long value) throws CoreException {
 
-
 	}
 
 	@Override
 	public void setDerived(boolean isDerived) throws CoreException {
-
 
 	}
 
@@ -390,19 +404,16 @@ public class BaseDummyFile implements IFile {
 	public void setDerived(boolean isDerived, IProgressMonitor monitor)
 			throws CoreException {
 
-
 	}
 
 	@Override
 	public void setHidden(boolean isHidden) throws CoreException {
-
 
 	}
 
 	@Override
 	public void setLocal(boolean flag, int depth, IProgressMonitor monitor)
 			throws CoreException {
-
 
 	}
 
@@ -416,12 +427,10 @@ public class BaseDummyFile implements IFile {
 	public void setPersistentProperty(QualifiedName key, String value)
 			throws CoreException {
 
-
 	}
 
 	@Override
 	public void setReadOnly(boolean readOnly) {
-
 
 	}
 
@@ -429,13 +438,11 @@ public class BaseDummyFile implements IFile {
 	public void setResourceAttributes(ResourceAttributes attributes)
 			throws CoreException {
 
-
 	}
 
 	@Override
 	public void setSessionProperty(QualifiedName key, Object value)
 			throws CoreException {
-
 
 	}
 
@@ -443,194 +450,10 @@ public class BaseDummyFile implements IFile {
 	public void setTeamPrivateMember(boolean isTeamPrivate)
 			throws CoreException {
 
-
 	}
 
 	@Override
 	public void touch(IProgressMonitor monitor) throws CoreException {
 
-
 	}
-
-	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
-
-		return null;
-	}
-
-	@Override
-	public boolean contains(ISchedulingRule rule) {
-
-		return false;
-	}
-
-	@Override
-	public boolean isConflicting(ISchedulingRule rule) {
-
-		return false;
-	}
-
-	@Override
-	public void appendContents(InputStream source, boolean force,
-			boolean keepHistory, IProgressMonitor monitor) throws CoreException {
-
-
-	}
-
-	@Override
-	public void appendContents(InputStream source, int updateFlags,
-			IProgressMonitor monitor) throws CoreException {
-
-
-	}
-
-	@Override
-	public void create(InputStream source, boolean force,
-			IProgressMonitor monitor) throws CoreException {
-
-
-	}
-
-	@Override
-	public void create(InputStream source, int updateFlags,
-			IProgressMonitor monitor) throws CoreException {
-
-
-	}
-
-	@Override
-	public void createLink(IPath localLocation, int updateFlags,
-			IProgressMonitor monitor) throws CoreException {
-
-
-	}
-
-	@Override
-	public void createLink(URI location, int updateFlags,
-			IProgressMonitor monitor) throws CoreException {
-
-
-	}
-
-	@Override
-	public void delete(boolean force, boolean keepHistory,
-			IProgressMonitor monitor) throws CoreException {
-
-
-	}
-
-	@Override
-	public String getCharset() throws CoreException {
-	    return "UTF-8";
-	}
-
-	@Override
-	public String getCharset(boolean checkImplicit) throws CoreException {
-
-		return null;
-	}
-
-	@Override
-	public String getCharsetFor(Reader reader) throws CoreException {
-
-		return null;
-	}
-
-	@Override
-	public IContentDescription getContentDescription() throws CoreException {
-
-		return null;
-	}
-
-	@Override
-	public InputStream getContents() throws CoreException {
-
-		return null;
-	}
-
-	@Override
-	public InputStream getContents(boolean force) throws CoreException {
-
-		return null;
-	}
-
-	@Override
-	public int getEncoding() throws CoreException {
-
-		return 0;
-	}
-
-	@Override
-	public IPath getFullPath() {
-
-		return null;
-	}
-
-	@Override
-	public IFileState[] getHistory(IProgressMonitor monitor)
-			throws CoreException {
-
-		return null;
-	}
-
-	@Override
-	public String getName() {
-
-		return null;
-	}
-
-	@Override
-	public boolean isReadOnly() {
-
-		return false;
-	}
-
-	@Override
-	public void move(IPath destination, boolean force, boolean keepHistory,
-			IProgressMonitor monitor) throws CoreException {
-
-
-	}
-
-	@Override
-	public void setCharset(String newCharset) throws CoreException {
-
-
-	}
-
-	@Override
-	public void setCharset(String newCharset, IProgressMonitor monitor)
-			throws CoreException {
-
-
-	}
-
-	@Override
-	public void setContents(InputStream source, boolean force,
-			boolean keepHistory, IProgressMonitor monitor) throws CoreException {
-
-
-	}
-
-	@Override
-	public void setContents(IFileState source, boolean force,
-			boolean keepHistory, IProgressMonitor monitor) throws CoreException {
-
-
-	}
-
-	@Override
-	public void setContents(InputStream source, int updateFlags,
-			IProgressMonitor monitor) throws CoreException {
-
-
-	}
-
-	@Override
-	public void setContents(IFileState source, int updateFlags,
-			IProgressMonitor monitor) throws CoreException {
-
-
-	}
-
 }

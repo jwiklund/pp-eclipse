@@ -1,4 +1,4 @@
-package browse.domain;
+package browse.dummy;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 

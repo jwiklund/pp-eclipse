@@ -32,45 +32,49 @@ public class InputTemplate implements Comparable<InputTemplate>
         return inputTemplate.compareTo(arg0.inputTemplate);
     }
     
-    @Override
-    public String toString() {
-        return "InputTemplate [inputTemplate=" + inputTemplate + ", path="
-                + path + ", line=" + line + "]";
-    }
+	@Override
+	public String toString() {
+		return "InputTemplate [inputTemplate=" + inputTemplate + ", path="
+				+ path + ", line=" + line + "]";
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((inputTemplate == null) ? 0 : inputTemplate.hashCode());
-        result = prime * result + ((path == null) ? 0 : path.toString().hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        InputTemplate other = (InputTemplate) obj;
-        if (inputTemplate == null) {
-            if (other.inputTemplate != null)
-                return false;
-        } else if (!inputTemplate.equals(other.inputTemplate))
-            return false;
-        if (path == null) {
-            if (other.path != null)
-                return false;
-        } else if (!path.toString().equals(other.path == null ? null : other.path.toString()))
-            return false;
-        return true;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((inputTemplate == null) ? 0 : inputTemplate.hashCode());
+		result = prime * result + line;
+		result = prime * result + ((path == null) ? 0 : path.hashCode());
+		return result;
+	}
 
 
-    public static InputTemplate restore(IContainer root, IMemento element) {       
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		InputTemplate other = (InputTemplate) obj;
+		if (inputTemplate == null) {
+			if (other.inputTemplate != null)
+				return false;
+		} else if (!inputTemplate.equals(other.inputTemplate))
+			return false;
+		if (line != other.line)
+			return false;
+		if (path == null) {
+			if (other.path != null)
+				return false;
+		} else if (!path.equals(other.path))
+			return false;
+		return true;
+	}
+
+	public static InputTemplate restore(IContainer root, IMemento element) {       
         String inputTemplate = element.getString("inputTemplate");
         String fullPath = element.getString("fullPath");
         Integer lineno = element.getInteger("lineno");

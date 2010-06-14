@@ -1,4 +1,4 @@
-package browse.domain;
+package browse.dummy;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -76,6 +76,11 @@ public class DummyResource
 		return new Entry(filename, batch(content(externalid)));
 	}
 	
+	public static Entry content(String filename, String externalid, String... contentreferences) 
+	{
+		return new Entry(filename, batch(content(externalid, contentreferences)));
+	}
+	
 	private static String batch(String... contents) 
 	{
 		StringBuilder sb = new StringBuilder();
@@ -88,16 +93,38 @@ public class DummyResource
 		return sb.toString();
 	}
 
-	private static String content(String externalid) 
+	private static String content(String externalid, String... contentreferences) 
 	{
 		return " <content>\n" + 
 		       "  <metadata>\n" + 
 		       "   <contentid>\n" + 
-		       "    <major>InputTemplate</major>\n" + 
+		       "    <major>Department</major>\n" + 
 		       "    <externalid>"+externalid+"</externalid>\n" + 
 		       "   </contentid>\n" + 
 		       "  </metadata>\n" + 
+		       contentlist("  ", contentreferences) +
 		       " </content>\n";
+	}
+
+	private static String contentlist(String indent, String... contentreferences) {
+		if (contentreferences.length == 0) {
+			return "";
+		}
+		StringBuilder sb = new StringBuilder();
+		sb.append(indent).append("<contentlist>\n");
+		for (String reference : contentreferences) {
+			sb.append(indent).append(" <entry>\n");
+			sb.append(indent).append("  <metadata>\n");
+			sb.append(indent).append("   <referredContent>\n");
+			sb.append(indent).append("    <contentid>\n");
+			sb.append(indent).append("     <externalid>").append(reference).append("</externalid>");
+			sb.append(indent).append("    </contentid>\n");
+			sb.append(indent).append("   </referredContent>\n");
+			sb.append(indent).append("  </metadata>\n");
+			sb.append(indent).append(" </entry>\n");
+		}
+		sb.append(indent).append("</contentlist>\n");
+		return sb.toString();
 	}
 
 	private static String templateDefinition(String... inputTemplates) {
@@ -119,7 +146,7 @@ public class DummyResource
 		       " </input-template>\n";
 	}
 
-	final static class Entry
+	public final static class Entry
 	{
 		public final String name;
 		public final String content;

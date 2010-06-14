@@ -1,4 +1,4 @@
-package browse.domain;
+package browse.dummy;
 
 import org.eclipse.core.resources.FileInfoMatcherDescription;
 import org.eclipse.core.resources.IContainer;
