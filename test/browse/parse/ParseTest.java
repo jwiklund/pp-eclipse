@@ -8,6 +8,8 @@ import java.io.StringWriter;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.stream.XMLStreamException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,8 +39,31 @@ public class ParseTest {
 	public void parse_content_should_return_id()
 		throws Exception
 	{
-		StringReader reader = new StringReader(DummyResource.content("", "test").content);
+		List<Content> content = parse(DummyResource.content("", "test").content);
+		assertEquals(new ContentId("test"), content.get(0).metadata.contentid);
+	}
+	
+	@Test
+	public void parse_content_should_return_found_on_line()
+		throws Exception
+	{
+		List<Content> content = parse(DummyResource.content("", "test").content);
+		assertEquals(3, content.get(0).foundOnLine);
+	}
+	
+	@Test
+	public void parse_content_should_skip_input_templates()
+		throws Exception
+	{
+		List<Content> content = parse(DummyResource.inputTemplate("", "test").content);
+		assertEquals(0, content.size());
+	}
+	
+	private List<Content> parse(String data)
+		throws XMLStreamException, JAXBException 
+	{
+		StringReader reader = new StringReader(data);
 		List<Content> content = new ContentParser(context.createUnmarshaller()).parse(reader);
-		assertEquals("test", content.get(0).metadata.contentid.externalid);
+		return content;
 	}
 }
