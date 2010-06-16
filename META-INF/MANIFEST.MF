@@ -1,12 +1,13 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Browse
-Bundle-SymbolicName: Browse; singleton:=true
+Bundle-Name: PP Eclipse Browse
+Bundle-SymbolicName: pp.eclipse.browse;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: browse.Activator
+Bundle-Activator: pp.eclipse.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.resources;bundle-version="3.5.0",
  org.eclipse.ui.ide;bundle-version="3.5.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Vendor: PP

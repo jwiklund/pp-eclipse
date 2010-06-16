@@ -4,19 +4,19 @@
 
    <extension point="org.eclipse.ui.commands">
    	<command
-          categoryId="org.eclipse.jdt.ui.category.source"
-          defaultHandler="browse.command.OpenInputTemplateCommand"
-          description="Open Input Template"
-          id="browse.command.OpenInputTemplateCommand"
-          name="Browse"> 	
+          categoryId="org.eclipse.ui.category.navigate"
+          defaultHandler="pp.eclipse.command.OpenInputTemplateCommand"
+          description="Browse Input Templates and select one to open"
+          id="pp.eclipse.command.OpenInputTemplateCommand"
+          name="Open Input Template"> 	
 	</command>
    </extension>
    
    <extension point="org.eclipse.ui.bindings">
       <key
-            commandId="browse.command.OpenInputTemplateCommand"
+            commandId="pp.eclipse.command.OpenInputTemplateCommand"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Ctrl+Shift+I">
+            sequence="M1+Shift+I">
 	  </key>
    </extension>
 
