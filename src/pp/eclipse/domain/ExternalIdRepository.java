@@ -21,12 +21,14 @@ import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 
+import pp.eclipse.common.Repository;
 import pp.eclipse.parse.Content;
 import pp.eclipse.parse.ContentParser;
 
 
-public class ExternalIdRepository {
+public class ExternalIdRepository implements Repository<ExternalId, ContentXML<ExternalId>> {
 
 	private final Logger logger;
 	private final IContainer root;
@@ -38,30 +40,37 @@ public class ExternalIdRepository {
 		this.logger = logger;
 		this.root = root;
 	}
+	
+	@Override
+	public boolean validate(ExternalId item) {
+		return true;
+	}
 
-	public List<ExternalId> externals() {
-		List<ExternalId> result = new ArrayList<ExternalId>();
+	@Override
+	public List<ContentXML<ExternalId>> list(IProgressMonitor monitor) {
+		List<ContentXML<ExternalId>> result = new ArrayList<ContentXML<ExternalId>>();
 		try {
-			root.accept(createVisitor(result), 0);
+			root.accept(createVisitor(monitor, result), 0);
 		} catch (CoreException e) {
 			logger.log(Level.FINE, "readExternals failed", e);
 		}
 		return result;
 	}
 	
-	private IResourceProxyVisitor createVisitor(final List<ExternalId> result) {
+	private IResourceProxyVisitor createVisitor(final IProgressMonitor monitor, final List<ContentXML<ExternalId>> result) {
 		return new IResourceProxyVisitor() {
 			@Override
 			public boolean visit(IResourceProxy proxy) throws CoreException {
 				if (xmlFiles.matcher(proxy.getName()).matches()) {
 					result.addAll(readExternals(proxy.requestFullPath(), proxy.requestResource()));
+					monitor.worked(1);
 				}
 				return true;
 			}
 		};
 	}
 	
-	private List<ExternalId> readExternals(IPath path, IResource resource) 
+	private List<ContentXML<ExternalId>> readExternals(IPath path, IResource resource) 
 	{
 		IFile file = (IFile) resource;
 	    InputStream contents = null;
@@ -82,7 +91,7 @@ public class ExternalIdRepository {
 	    try {
 	        Reader reader = new InputStreamReader(contents, charset);
 	        List<Content> contentList = parser.parse(reader);
-	        return convert(path, contentList);
+	        return Collections.singletonList(new ContentXML<ExternalId>(path, resource.getModificationStamp(), convert(path, contentList)));
 	    } catch (IOException e) {
 	    	logger.log(Level.FINER, "Failed reading file", e);
 	    } catch (XMLStreamException e) {
@@ -108,6 +117,4 @@ public class ExternalIdRepository {
 		}
 		return result;
 	}
-
-
 }

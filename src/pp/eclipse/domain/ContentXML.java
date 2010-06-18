@@ -4,15 +4,16 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 
+import pp.eclipse.common.DefinedItem;
 import pp.eclipse.common.DefiningFile;
 
 
-public class TemplateDefinition implements DefiningFile<InputTemplate> {
+public class ContentXML<Item extends DefinedItem> implements DefiningFile<Item> {
     public final IPath path;
     public final long modified;
-    public final List<InputTemplate> templates;
+    public final List<Item> templates;
     
-    public TemplateDefinition(IPath path, long modified, List<InputTemplate> templates) {
+    public ContentXML(IPath path, long modified, List<Item> templates) {
         this.path = path;
         this.modified = modified;
         this.templates = templates;
@@ -37,7 +38,7 @@ public class TemplateDefinition implements DefiningFile<InputTemplate> {
 	}
 
 	@Override
-	public List<InputTemplate> defines() 
+	public List<Item> defines() 
 	{
 		return templates;
 	}

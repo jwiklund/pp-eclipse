@@ -5,11 +5,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IMemento;
 
-/**
- * @author Jonas Wiklund
- *
- */
-public class InputTemplate implements Comparable<InputTemplate> 
+import pp.eclipse.common.DefinedItem;
+
+public class InputTemplate implements DefinedItem
 {   
     public final String inputTemplate;
     public final IPath path;
@@ -22,22 +20,21 @@ public class InputTemplate implements Comparable<InputTemplate>
         this.path = path;
         this.line = line;
     }
-    
 
-    @Override
-    public int compareTo(InputTemplate arg0) {
-        if (inputTemplate.equals(arg0.inputTemplate)) {
-            return path.toString().compareTo(arg0.path.toString());
-        }
-        return inputTemplate.compareTo(arg0.inputTemplate);
-    }
-    
 	@Override
 	public String toString() {
 		return "InputTemplate [inputTemplate=" + inputTemplate + ", path="
 				+ path + ", line=" + line + "]";
 	}
-
+	
+	@Override
+	public int compareTo(DefinedItem arg0) {
+		if (externalid().equals(arg0.externalid())) {
+			return path().toString().compareTo(arg0.path().toString());
+		}
+		return externalid().compareTo(externalid());
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -91,4 +88,20 @@ public class InputTemplate implements Comparable<InputTemplate>
         element.putString("fullPath", item.path.toString());
         element.putInteger("lineno", item.line);
     }
+
+
+	@Override
+	public IPath path() {
+		return path;
+	}
+
+	@Override
+	public int line() {
+		return line;
+	}
+	
+	@Override
+	public String externalid() {
+		return inputTemplate;
+	}
 }

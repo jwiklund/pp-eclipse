@@ -2,7 +2,9 @@ package pp.eclipse.domain;
 
 import org.eclipse.core.runtime.IPath;
 
-public class ExternalId {
+import pp.eclipse.common.DefinedItem;
+
+public class ExternalId implements DefinedItem {
 
 	private final String externalid;
 	private final IPath path;
@@ -50,5 +52,28 @@ public class ExternalId {
 		} else if (!path.equals(other.path))
 			return false;
 		return true;
+	}
+
+	@Override
+	public IPath path() {
+		return path;
+	}
+
+	@Override
+	public int line() {
+		return line;
+	}
+	
+	@Override
+	public String externalid() {
+		return externalid;
+	}
+
+	@Override
+	public int compareTo(DefinedItem o) {
+		if (externalid().equals(o.externalid())) {
+			return path().toString().compareTo(o.path().toString());
+		} 
+		return externalid().compareTo(o.externalid());
 	}
 }

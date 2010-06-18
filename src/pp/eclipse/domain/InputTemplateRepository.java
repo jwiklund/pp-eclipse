@@ -26,6 +26,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import pp.eclipse.parse.Template;
+import pp.eclipse.parse.TemplateParser;
+
 public class InputTemplateRepository {
 
 	private Logger logger;
@@ -158,23 +161,12 @@ public class InputTemplateRepository {
             logger.log(Level.FINE, "Failed to get charset", e);
         }
 	    try {
-	        BufferedReader reader = new BufferedReader(new InputStreamReader(contents, charset));
-	        int[] lineno = new int[1];
-	        String topElement = readTopElement(reader, lineno);
-	        if (!"template-definition".equalsIgnoreCase(topElement)) {
-	            return null;
+	        List<Template> templates = TemplateParser.parse(contents, charset);
+	        List<InputTemplate> inputs = new ArrayList<InputTemplate>();
+	        for (Template template : templates) {
+	        	inputs.add(new InputTemplate(template.inputTemplate, fullPath, template.line));
 	        }
-	        String line = null;
-	        Pattern pattern = Pattern.compile("<input-template[^>]+name=\"([^\"]+)\"");
-	        List<InputTemplate> templates = new ArrayList<InputTemplate>();
-	        while ((line = reader.readLine()) != null) {
-	            lineno[0] = lineno[0] + 1;
-	            Matcher matcher = pattern.matcher(line);
-	            while (matcher.find()) {
-	                templates.add(new InputTemplate(matcher.group(1), fullPath, lineno[0]));
-	            }
-	        }
-	        TemplateDefinition templateDefinition = new TemplateDefinition(fullPath, file.getModificationStamp(), templates);
+	        TemplateDefinition templateDefinition = new TemplateDefinition(fullPath, file.getModificationStamp(), inputs);
 	        templateDefinitions.put(fullPath, templateDefinition);
             return templateDefinition;
 	    } catch (UnsupportedEncodingException e) {
@@ -191,19 +183,6 @@ public class InputTemplateRepository {
             }
 	    }
 	}
-
-    private static String readTopElement(BufferedReader reader, int[] lineno) throws IOException {
-        Pattern pattern = Pattern.compile("<([^?>][^ >]+)[^>]+>");
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            lineno[0] = lineno[0] + 1;
-            Matcher matcher = pattern.matcher(line);
-            if (matcher.find()) {
-                return matcher.group(1);
-            }
-        }
-        return null;
-    }
 
     private int countSourceFiles() 
 	{
