@@ -10,6 +10,13 @@
           id="pp.eclipse.command.OpenInputTemplateCommand"
           name="Open Input Template"> 	
 	</command>
+    <command
+          categoryId="org.eclipse.ui.category.file"
+          defaultHandler="pp.eclipse.command.ImportCommand"
+          description="Imports the currently open XML file as Content XML."
+          id="pp-eclipse.command.ImportContentXML"
+          name="Import Content XML">
+    </command>
    </extension>
    
    <extension point="org.eclipse.ui.bindings">
@@ -18,6 +25,12 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+Shift+I">
 	  </key>
+      <key
+            commandId="pp-eclipse.command.ImportContentXML"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Shift+Alt+X I">
+      </key>
    </extension>
 
 </plugin>
