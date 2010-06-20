@@ -17,12 +17,18 @@ public class ContentImporter {
 		connection.setDoOutput(true);
 		connection.setRequestMethod("PUT");
 		connection.setRequestProperty("Content-Type", "text/xml&charset="+content.charset);
+		connection.setUseCaches(false);
 		OutputStream writeTo = connection.getOutputStream();
 		flush(content.stream, writeTo);
 		writeTo.close();
-		InputStream readFrom = connection.getInputStream();
 		
 		int result = connection.getResponseCode();
+		InputStream readFrom;
+		if (result >= 200 && result <= 300) {
+		    readFrom = connection.getInputStream();
+		} else {
+		    readFrom = connection.getErrorStream();
+		}
 		ImportResult importResult = new ImportResult(result, read(readFrom, connection.getContentEncoding()));
 		connection.disconnect();
 		return importResult;
@@ -32,7 +38,7 @@ public class ContentImporter {
 	{
 		ByteArrayOutputStream writer = new ByteArrayOutputStream();
 		flush(readFrom, writer);
-		if (encoding != null) {
+		if (encoding == null) {
 			encoding = "UTF8";
 		}
 		return new String(writer.toByteArray(), encoding);
