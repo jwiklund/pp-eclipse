@@ -24,13 +24,13 @@
             commandId="pp.eclipse.command.OpenInputTemplateCommand"
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+Shift+I">
+            sequence="M1+M2+I">
 	  </key>
       <key
             commandId="pp-eclipse.command.ImportContentXML"
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Shift+Alt+X I">
+            sequence="M2+M3+X I">
       </key>
    </extension>
 
