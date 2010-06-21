@@ -1,4 +1,4 @@
 Experimental improvement of the Polopoly eclipse plugin.
 
-Use Ctrl+Shift+I to launch Show Input Template dialog similar to the Show Type and Show Resource dialogs.
-Use Alt+Shift+X I to import currently active file as content XML.
+Use Ctrl+Shift+I to launch Show Input Template dialog similar to the Show Type and Show Resource dialogs (Command name Open Input Template)
+Use Alt+Shift+X I to import currently active file as content XML (Command name Import Content XML)
