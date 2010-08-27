@@ -41,4 +41,39 @@ public class TemplateDefinition implements DefiningFile<InputTemplate> {
 	{
 		return templates;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (modified ^ (modified >>> 32));
+		result = prime * result + ((path == null) ? 0 : path.hashCode());
+		result = prime * result
+				+ ((templates == null) ? 0 : templates.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TemplateDefinition other = (TemplateDefinition) obj;
+		if (modified != other.modified)
+			return false;
+		if (path == null) {
+			if (other.path != null)
+				return false;
+		} else if (!path.equals(other.path))
+			return false;
+		if (templates == null) {
+			if (other.templates != null)
+				return false;
+		} else if (!templates.equals(other.templates))
+			return false;
+		return true;
+	}
 }

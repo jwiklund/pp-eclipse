@@ -2,7 +2,8 @@
 <?eclipse version="3.4"?>
 <plugin>
 
-   <extension point="org.eclipse.ui.commands">
+   <extension
+         point="org.eclipse.ui.commands">
    	<command
           categoryId="org.eclipse.ui.category.navigate"
           defaultHandler="pp.eclipse.command.OpenInputTemplateCommand"
@@ -17,6 +18,13 @@
           id="pp-eclipse.command.ImportContentXML"
           name="Import Content XML">
     </command>
+	<command
+          categoryId="org.eclipse.ui.category.navigate"
+          defaultHandler="pp.eclipse.command.OpenExternalIdCommand"
+          description="Browse Content External Id and select one to open"
+          id="pp.eclipse.command.OpenExternalIdCommand"
+          name="Open Content by External Id"> 	
+	</command>
    </extension>
    
    <extension point="org.eclipse.ui.bindings">
@@ -25,6 +33,11 @@
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M2+I">
+	  </key>
+	  <key
+            commandId="pp.eclipse.command.OpenExternalIdCommand"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+E">
 	  </key>
       <key
             commandId="pp-eclipse.command.ImportContentXML"

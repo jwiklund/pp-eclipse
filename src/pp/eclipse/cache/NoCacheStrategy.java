@@ -1,8 +1,5 @@
 package pp.eclipse.cache;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import pp.eclipse.common.DefinedItem;
@@ -20,12 +17,13 @@ public class NoCacheStrategy<Item extends DefinedItem, Container extends Definin
 
 	@Override
 	public Iterable<Item> list(IProgressMonitor monitor, Repository<Item, Container> repo) {
-		List<Item> result = new ArrayList<Item>();
-		List<Container> containers = repo.list(monitor);
-		for (Container container : containers) {
-			result.addAll(container.defines());
-		}
-		return result;
+//		List<Item> result = new ArrayList<Item>();
+//		List<Container> containers = repo.list(monitor);
+//		for (Container container : containers) {
+//			result.addAll(container.defines());
+//		}
+//		return result;
+		return null;
 	}
 
 	@Override

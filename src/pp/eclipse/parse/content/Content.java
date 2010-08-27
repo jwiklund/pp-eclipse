@@ -1,4 +1,4 @@
-package pp.eclipse.parse;
+package pp.eclipse.parse.content;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;

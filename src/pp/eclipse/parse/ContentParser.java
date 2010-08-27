@@ -1,6 +1,6 @@
 package pp.eclipse.parse;
 
-import java.io.Reader;
+import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +15,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public class ContentParser {
+import pp.eclipse.domain.ExternalId;
+import pp.eclipse.parse.content.Content;
+
+public class ContentParser implements Parser<ExternalId> {
 	
 	private final Unmarshaller unmarshaller;
 
@@ -37,7 +40,7 @@ public class ContentParser {
 		}
 	}
 
-	public List<Content> parse(Reader reader) 
+	public List<ExternalId> parse(BufferedReader reader) 
 		throws XMLStreamException, JAXBException 
 	{
 		XMLEventReader source = xmlif.createXMLEventReader(reader);
@@ -48,11 +51,15 @@ public class ContentParser {
 		int[] lineOfContentStart = new int[1];
 		lineOfContentStart[0] = -1;
 		XMLEventReader contentStart = xmlif.createFilteredReader(source, createContentFilter(lineOfContentStart));
-		List<Content> contents = new ArrayList<Content>();
+		List<ExternalId> contents = new ArrayList<ExternalId>();
 		while (contentStart.peek() != null) {
 			Content content = (Content) unmarshaller.unmarshal(source);
 			addLineInfo(content, lineOfContentStart);
-			contents.add(content);
+			if (content != null && content.metadata != null && 
+					content.metadata.contentid != null && 
+					content.metadata.contentid.externalid != null) {
+				contents.add(new ExternalId(content.metadata.contentid.externalid, null, content.foundOnLine));
+			}
 		}
 		return contents;
 	}
@@ -91,5 +98,4 @@ public class ContentParser {
 		return elementName.equals(event.getName().getLocalPart()) &&
 			"http://www.polopoly.com/polopoly/cm/xmlio".equals(event.getName().getNamespaceURI());
 	}
-
 }

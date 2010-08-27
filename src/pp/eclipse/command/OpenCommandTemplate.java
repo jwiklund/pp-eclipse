@@ -8,7 +8,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -16,32 +15,27 @@ import org.eclipse.ui.ide.IDE;
 import pp.eclipse.Activator;
 import pp.eclipse.common.DefinedItem;
 import pp.eclipse.common.DefiningFile;
-import pp.eclipse.common.Repository;
-import pp.eclipse.ui.Dialog;
-import pp.eclipse.ui.DialogFactory;
+import pp.eclipse.common.DialogFactory;
+import pp.eclipse.ui.SelectionDialog;
 
-public abstract class OpenCommandTemplate<Container extends DefiningFile<DefinedItem>> extends AbstractHandler 
+public abstract class OpenCommandTemplate<Item extends DefinedItem, Container extends DefiningFile<Item>> 
+	extends AbstractHandler 
 {
-	private DialogFactory<DefinedItem, Container> dialogFactory;
-	private Repository<DefinedItem, Container> repository;
+	private DialogFactory<Item, Container> dialogFactory;
 	
-	
-	
-	public OpenCommandTemplate(DialogFactory<DefinedItem, Container> dialogFactory,
-							   Repository<DefinedItem, Container> repository) 
+	public OpenCommandTemplate(DialogFactory<Item, Container> dialogFactory) 
 	{
 		this.dialogFactory = dialogFactory;
-		this.repository = repository;
 	}
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Shell shell = new Shell();
-        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         Activator activator = Activator.getDefault();
         
-		Dialog<DefinedItem> dialog = dialogFactory.create(shell, activator.getWorkspaceRoot(), repository);
-        DefinedItem item = dialog.select();
+		SelectionDialog<Item, Container> dialog = dialogFactory.createDialog(activator.getWorkspaceRoot());
+        Item item = dialog.select();
         if (item == null) {
         	return null;
         }

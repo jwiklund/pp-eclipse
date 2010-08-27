@@ -7,34 +7,85 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 
 import pp.eclipse.Activator;
-import pp.eclipse.cache.CacheStrategy;
 import pp.eclipse.common.DefinedItem;
+import pp.eclipse.common.DefiningFactory;
 import pp.eclipse.common.DefiningFile;
 import pp.eclipse.common.Repository;
 
 
-public class SelectionDialogTemplate<Container extends DefiningFile<DefinedItem>> extends FilteredItemsSelectionDialog 
+public class SelectionDialog<Item extends DefinedItem, Container extends DefiningFile<Item>> extends FilteredItemsSelectionDialog 
 {
+	private final Repository<Item, Container> repository;
+	private final DefiningFactory<Item, Container> factory;
 
-	private CacheStrategy<DefinedItem, Container> cacheStrategy;
-    private Repository<DefinedItem, Container> repository;
-
-    public SelectionDialogTemplate(Shell shell, 
-    		CacheStrategy<DefinedItem, Container> cacheStrategy, 
-    		Repository<DefinedItem, Container> repository)
+    public SelectionDialog(Shell shell, 
+    		DefiningFactory<Item, Container> factory, 
+    		Repository<Item, Container> repository)
     {
         super(shell, false);
-        this.cacheStrategy = cacheStrategy;
+		this.factory = factory;
         this.repository = repository;
-        //setTitle("Filtered ContentXml Dialog");
-        //setSelectionHistory(new InputTemplateSelectionHistory());
-        //setListLabelProvider(new InputTemplateListLabelProvider(this));
+        setSelectionHistory(new DefiningSelectionHistory());
+        setListLabelProvider(new DefiningListLabelProvider());
+    }
+    
+    @SuppressWarnings("unchecked")
+	public Item select() {
+    	setInitialPattern("p.");
+        open();
+        Object[] result = getResult();
+        if (result == null) {
+            return null;
+        }
+        return (Item) result[0];
+    }
+    
+    protected class DefiningSelectionHistory extends SelectionHistory {
+
+		@Override
+		protected Object restoreItemFromMemento(IMemento memento) {
+			return factory.restore(memento);
+		}
+
+		@Override
+		protected void storeItemToMemento(Object item, IMemento memento) {
+			factory.store(item, memento);
+		}
+    }
+    
+    protected class  DefiningListLabelProvider extends LabelProvider 
+    	implements ILabelProviderListener, IStyledLabelProvider 
+    {
+
+		@Override
+		public StyledString getStyledText(Object element) {
+			if (element instanceof DefinedItem) {
+				DefinedItem item = (DefinedItem) element;
+	            StyledString result = new StyledString(item.externalid());
+	            if (isDuplicateElement(element)) {
+	                String path = " - " + item.path().makeRelative().toString();
+	                result.append(new StyledString(path, StyledString.QUALIFIER_STYLER));
+	            }
+	            return result;
+	        }
+	        return new StyledString("?");
+		}
+
+		@Override
+		public void labelProviderChanged(LabelProviderChangedEvent event) {
+		}
     }
     
     @Override
@@ -72,11 +123,16 @@ public class SelectionDialogTemplate<Container extends DefiningFile<DefinedItem>
     protected void fillContentProvider(AbstractContentProvider contentProvider,
         ItemsFilter filter, IProgressMonitor progressMonitor) throws CoreException
     {
-    	cacheStrategy.before(progressMonitor, repository);
-        for (DefinedItem item : cacheStrategy.list(progressMonitor, repository)) {
-        	contentProvider.add(item, filter);
-        }
-        cacheStrategy.after(progressMonitor, repository);
+    	//cacheStrategy.before(progressMonitor, repository);
+        //for (DefinedItem item : cacheStrategy.list(progressMonitor, repository)) {
+        //	contentProvider.add(item, filter);
+        //}
+        //cacheStrategy.after(progressMonitor, repository);
+    	for (Container container : repository.list(progressMonitor)) {
+    		for (DefinedItem item : container.defines()) {
+    			contentProvider.add(item, filter);
+    		}
+    	}
     }
     
     private static final String DIALOG_SETTINGS = "FilteredContentXmlDialogSettings";

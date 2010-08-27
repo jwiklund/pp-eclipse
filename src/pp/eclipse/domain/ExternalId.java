@@ -58,6 +58,10 @@ public class ExternalId implements DefinedItem {
 	public IPath path() {
 		return path;
 	}
+	
+	public ExternalId updatePath(IPath newPath) {
+		return new ExternalId(externalid, newPath, line);
+	}
 
 	@Override
 	public int line() {
@@ -76,4 +80,6 @@ public class ExternalId implements DefinedItem {
 		} 
 		return externalid().compareTo(o.externalid());
 	}
+	
+	
 }

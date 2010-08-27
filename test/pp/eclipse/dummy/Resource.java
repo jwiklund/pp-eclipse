@@ -175,6 +175,10 @@ public class Resource
 								throw new RuntimeException("UTF-8 not supportd");
 							}
 						}
+						@Override
+						public IPath getFullPath() {
+							return Path.path("/" + name);
+						}
 					};
 				}
 			};
