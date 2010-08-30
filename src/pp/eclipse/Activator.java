@@ -1,10 +1,18 @@
 package pp.eclipse;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
+import pp.eclipse.cache.Cache;
+import pp.eclipse.cache.CacheStrategy;
+import pp.eclipse.common.DefinedItem;
+import pp.eclipse.common.DefiningFile;
 
 
 /**
@@ -30,6 +38,21 @@ public class Activator extends AbstractUIPlugin {
 //        The copies in the build directory should be marked as derived (IResource.setDerived()). 
 //        Derived resources are then filtered out of the open resource dialog. Whoever is copying those resources should be marking the 
 //        copies as derived - the Java builder does this, for example.
+    }
+    
+    private Map<Class<?>, CacheStrategy<?, ?>> strategies = new HashMap<Class<?>, CacheStrategy<?,?>>();
+    public <I extends DefinedItem, C extends DefiningFile<I>> CacheStrategy<I, C> cacheStrategy(Class<I> forItem) 
+    {
+        synchronized (strategies) {
+            @SuppressWarnings("unchecked")
+            CacheStrategy<I, C> cacheStrategy = (CacheStrategy<I, C>) strategies.get(forItem);
+            if (cacheStrategy == null) {
+                cacheStrategy = Cache.post();
+                cacheStrategy.startup();
+                strategies.put(forItem, cacheStrategy);
+            }
+            return cacheStrategy;
+        }
     }
 
     public IWorkspaceRoot getWorkspaceRoot() {
@@ -61,6 +84,13 @@ public class Activator extends AbstractUIPlugin {
     {
         //ResourcesPlugin.getWorkspace().removeResourceChangeListener(repository.getResourceListener());
         plugin = null;
+        synchronized (strategies) {
+            for (CacheStrategy<?, ?> strategy : strategies.values()) {
+                strategy.shutdown();
+            }
+            strategies.clear();
+            strategies = null;
+        }
         super.stop(context);
     }
 

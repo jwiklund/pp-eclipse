@@ -10,30 +10,18 @@ import pp.eclipse.common.DefinedItem;
 import pp.eclipse.common.DefiningFile;
 import pp.eclipse.common.IRepository;
 
-public class NoCacheStrategy<Item extends DefinedItem, Container extends DefiningFile<Item>> implements CacheStrategy<Item, Container> 
+public class NoCacheStrategy<Item extends DefinedItem, Container extends DefiningFile<Item>> extends EmptyCacheStrategy<Item, Container> 
 {
-
-	@Override
-	public void before(IProgressMonitor monitor, IRepository<Item, Container> repo) 
-	{
-		// NOP
-	}
-
 	@Override
 	public Iterable<Item> list(IProgressMonitor monitor, IRepository<Item, Container> repo) 
 		throws CoreException 
 	{
 		List<Item> result = new ArrayList<Item>();
 		List<Container> containers = repo.list(monitor);
+		monitor.beginTask("Scanning...", 1000);
 		for (Container container : containers) {
 			result.addAll(container.defines());
 		}
 		return result;
-	}
-
-	@Override
-	public void after(IProgressMonitor monitor, IRepository<Item, Container> repo) 
-	{
-		// NOP
 	}
 }

@@ -34,10 +34,9 @@ public class Repository<Item extends DefinedItem, Container extends DefiningFile
 	}
 	
 	@Override
-	public List<Container> list(IProgressMonitor monitor) 
+	public List<Container> list(final IProgressMonitor monitor) 
 		throws CoreException
 	{
-		monitor.beginTask("Scanning", 1);
 		final List<Container> containers = new ArrayList<Container>();
 		root.accept(new IResourceProxyVisitor() {
 			@Override
@@ -48,6 +47,7 @@ public class Repository<Item extends DefinedItem, Container extends DefiningFile
 						Container read = read((IFile) resource);
 						if (read != null) {
 							containers.add(read);
+							monitor.worked(1);
 						}
 					}
 				}
@@ -55,7 +55,6 @@ public class Repository<Item extends DefinedItem, Container extends DefiningFile
 			}
 
 		}, 0);
-		monitor.worked(1);
 		return containers;
 	}
 	

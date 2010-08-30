@@ -10,15 +10,10 @@ import pp.eclipse.common.DefinedItem;
 import pp.eclipse.common.DefiningFile;
 import pp.eclipse.common.IRepository;
 
-public class PostCacheStrategy<Item extends DefinedItem, Container extends DefiningFile<Item>> implements CacheStrategy<Item, Container>
+public class PostCacheStrategy<Item extends DefinedItem, Container extends DefiningFile<Item>> extends EmptyCacheStrategy<Item, Container>
 {
 	private List<Item> cached = null;
 	private long lastUpdated = 0;
-	
-	@Override
-	public void before(IProgressMonitor monitor, IRepository<Item, Container> repo) 
-	{
-	}
 
 	@Override
 	public Iterable<Item> list(IProgressMonitor monitor, IRepository<Item, Container> repo) 
@@ -43,6 +38,13 @@ public class PostCacheStrategy<Item extends DefinedItem, Container extends Defin
 	
 	private List<Item> refresh(IProgressMonitor monitor, IRepository<Item, Container> repo) throws CoreException 
 	{
+	    monitor.beginTask("Delaying...", 1);
+	    try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+        }
+        monitor.worked(1);
+        monitor.beginTask("Scanning...", 1000);
 		List<Item> result = new ArrayList<Item>();
 		List<Container> containers = repo.list(monitor);
 		for (Container container : containers) {

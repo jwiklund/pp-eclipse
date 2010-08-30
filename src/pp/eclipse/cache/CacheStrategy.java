@@ -8,8 +8,12 @@ import pp.eclipse.common.DefiningFile;
 import pp.eclipse.common.IRepository;
 
 public interface CacheStrategy<Item extends DefinedItem, Container extends DefiningFile<Item>> {
-	
+
+    void startup();
+    void shutdown();
+    
 	void before(IProgressMonitor monitor, IRepository<Item, Container> repo);
-	Iterable<Item> list(IProgressMonitor monitor, IRepository<Item, Container> repo) throws CoreException;
 	void after(IProgressMonitor monitor, IRepository<Item, Container> repo) throws CoreException;
+	
+	Iterable<Item> list(IProgressMonitor monitor, IRepository<Item, Container> repo) throws CoreException;
 }
