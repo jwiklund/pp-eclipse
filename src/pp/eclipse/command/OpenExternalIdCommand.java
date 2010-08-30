@@ -4,6 +4,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.swt.widgets.Shell;
 
 import pp.eclipse.cache.Cache;
+import pp.eclipse.cache.CacheStrategy;
 import pp.eclipse.common.DialogFactory;
 import pp.eclipse.common.Repository;
 import pp.eclipse.domain.ContentXML;
@@ -21,7 +22,8 @@ public class OpenExternalIdCommand extends OpenCommandTemplate<ExternalId, Conte
 				Shell shell = new Shell();
 				ContentXMLFactory factory = new ContentXMLFactory(root);
 				Repository<ExternalId, ContentXML> repository = new Repository<ExternalId, ContentXML>(root, factory, new ContentParser());
-				SelectionDialog<ExternalId, ContentXML> dialog = new SelectionDialog<ExternalId, ContentXML>(shell, factory, repository, Cache.<ExternalId, ContentXML>none());
+				CacheStrategy<ExternalId, ContentXML> cache = Cache.post();
+				SelectionDialog<ExternalId, ContentXML> dialog = new SelectionDialog<ExternalId, ContentXML>(shell, factory, repository, cache);
 				dialog.setTitle("Filtered ContentXml Dialog");
 				return dialog;
 			}

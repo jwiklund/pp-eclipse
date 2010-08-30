@@ -7,4 +7,8 @@ public class Cache {
 	public static <I extends DefinedItem, C extends DefiningFile<I>> CacheStrategy<I, C> none() {
 		return new NoCacheStrategy<I, C>();
 	}
+	
+	public static <I extends DefinedItem, C extends DefiningFile<I>> CacheStrategy<I, C> post() {
+		return new PostCacheStrategy<I, C>();
+	}
 }

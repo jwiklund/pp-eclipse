@@ -11,5 +11,5 @@ public interface CacheStrategy<Item extends DefinedItem, Container extends Defin
 	
 	void before(IProgressMonitor monitor, IRepository<Item, Container> repo);
 	Iterable<Item> list(IProgressMonitor monitor, IRepository<Item, Container> repo) throws CoreException;
-	void after(IProgressMonitor monitor, IRepository<Item, Container> repo);
+	void after(IProgressMonitor monitor, IRepository<Item, Container> repo) throws CoreException;
 }

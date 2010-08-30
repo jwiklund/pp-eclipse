@@ -4,6 +4,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.swt.widgets.Shell;
 
 import pp.eclipse.cache.Cache;
+import pp.eclipse.cache.CacheStrategy;
 import pp.eclipse.common.DialogFactory;
 import pp.eclipse.common.Repository;
 import pp.eclipse.domain.InputTemplate;
@@ -21,7 +22,8 @@ public class OpenInputTemplateCommand extends OpenCommandTemplate<InputTemplate,
 				Shell shell = new Shell();
 				TemplateDefinitionFactory factory = new TemplateDefinitionFactory(root);
 				Repository<InputTemplate, TemplateDefinition> repository = new Repository<InputTemplate, TemplateDefinition>(root, factory, new TemplateParser());
-				SelectionDialog<InputTemplate, TemplateDefinition> dialog = new SelectionDialog<InputTemplate, TemplateDefinition>(shell, factory, repository, Cache.<InputTemplate, TemplateDefinition>none());
+				CacheStrategy<InputTemplate, TemplateDefinition> cache = Cache.post();
+				SelectionDialog<InputTemplate, TemplateDefinition> dialog = new SelectionDialog<InputTemplate, TemplateDefinition>(shell, factory, repository, cache);
 				dialog.setTitle("Filtered TemplateDefinition Dialog");
 				return dialog;
 			}
