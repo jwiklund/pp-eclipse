@@ -19,23 +19,27 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 
 import pp.eclipse.Activator;
+import pp.eclipse.cache.CacheStrategy;
 import pp.eclipse.common.DefinedItem;
 import pp.eclipse.common.DefiningFactory;
 import pp.eclipse.common.DefiningFile;
-import pp.eclipse.common.Repository;
+import pp.eclipse.common.IRepository;
 
 
 public class SelectionDialog<Item extends DefinedItem, Container extends DefiningFile<Item>> extends FilteredItemsSelectionDialog 
 {
-	private final Repository<Item, Container> repository;
 	private final DefiningFactory<Item, Container> factory;
+	private final IRepository<Item, Container> repository;
+	private final CacheStrategy<Item, Container> cacheStrategy;
 
     public SelectionDialog(Shell shell, 
     		DefiningFactory<Item, Container> factory, 
-    		Repository<Item, Container> repository)
+    		IRepository<Item, Container> repository,
+    		CacheStrategy<Item, Container> cacheStrategy)
     {
         super(shell, false);
 		this.factory = factory;
+		this.cacheStrategy = cacheStrategy;
         this.repository = repository;
         setSelectionHistory(new DefiningSelectionHistory());
         setListLabelProvider(new DefiningListLabelProvider());
@@ -123,16 +127,11 @@ public class SelectionDialog<Item extends DefinedItem, Container extends Definin
     protected void fillContentProvider(AbstractContentProvider contentProvider,
         ItemsFilter filter, IProgressMonitor progressMonitor) throws CoreException
     {
-    	//cacheStrategy.before(progressMonitor, repository);
-        //for (DefinedItem item : cacheStrategy.list(progressMonitor, repository)) {
-        //	contentProvider.add(item, filter);
-        //}
-        //cacheStrategy.after(progressMonitor, repository);
-    	for (Container container : repository.list(progressMonitor)) {
-    		for (DefinedItem item : container.defines()) {
-    			contentProvider.add(item, filter);
-    		}
-    	}
+    	cacheStrategy.before(progressMonitor, repository);
+        for (DefinedItem item : cacheStrategy.list(progressMonitor, repository)) {
+        	contentProvider.add(item, filter);
+        }
+        cacheStrategy.after(progressMonitor, repository);
     }
     
     private static final String DIALOG_SETTINGS = "FilteredContentXmlDialogSettings";

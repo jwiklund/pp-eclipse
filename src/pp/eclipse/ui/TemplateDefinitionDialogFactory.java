@@ -3,7 +3,8 @@ package pp.eclipse.ui;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.swt.widgets.Shell;
 
-import pp.eclipse.common.BasicRepository;
+import pp.eclipse.cache.Cache;
+import pp.eclipse.common.Repository;
 import pp.eclipse.common.DialogFactory;
 import pp.eclipse.domain.InputTemplate;
 import pp.eclipse.domain.TemplateDefinition;
@@ -16,8 +17,8 @@ public class TemplateDefinitionDialogFactory implements DialogFactory<InputTempl
 	{
 		Shell shell = new Shell();
 		TemplateDefinitionFactory factory = new TemplateDefinitionFactory(root);
-		BasicRepository<InputTemplate, TemplateDefinition> repository = new BasicRepository<InputTemplate, TemplateDefinition>(root, factory, new TemplateParser());
-		SelectionDialog<InputTemplate, TemplateDefinition> dialog = new SelectionDialog<InputTemplate, TemplateDefinition>(shell, factory, repository);
+		Repository<InputTemplate, TemplateDefinition> repository = new Repository<InputTemplate, TemplateDefinition>(root, factory, new TemplateParser());
+		SelectionDialog<InputTemplate, TemplateDefinition> dialog = new SelectionDialog<InputTemplate, TemplateDefinition>(shell, factory, repository, Cache.<InputTemplate, TemplateDefinition>none());
 		dialog.setTitle("Filtered TemplateDefinition Dialog");
 		return dialog;
 	}
