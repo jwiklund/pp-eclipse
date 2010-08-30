@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -43,10 +45,13 @@ public class BasicRepository<Item extends DefinedItem, Container extends Definin
 				if (proxy.getName().matches(".*\\.xml")) {
 					IResource resource = proxy.requestResource();
 					if (resource instanceof IFile) {
-						containers.add(read((IFile) resource));
+						Container read = read((IFile) resource);
+						if (read != null) {
+							containers.add(read);
+						}
 					}
 				}
-				return false;
+				return true;
 			}
 
 		}, 0);
@@ -54,7 +59,9 @@ public class BasicRepository<Item extends DefinedItem, Container extends Definin
 		return containers;
 	}
 	
-	private Container read(IFile iResource) {
+	private Container read(IFile iResource) 
+		throws CoreException 
+	{
 		InputStream content = null;
 		try {
 			content = iResource.getContents();
@@ -66,12 +73,12 @@ public class BasicRepository<Item extends DefinedItem, Container extends Definin
 				List<Item> parse = parser.parse(new BufferedReader(new InputStreamReader(content, charset)));
 				return factory.create(iResource.getFullPath(), iResource.getModificationStamp(), parse);
 			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+				Logger.getLogger("pp.eclipse.parse").fine("Parse of " + iResource.getName() + " failed: " + e.getMessage());
+				Logger.getLogger("pp.eclipse.parse").log(Level.FINER, "Parse failure", e);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Logger.getLogger("pp.eclipse.parse").fine("Parse of " + iResource.getName() + " failed: " + e.getMessage());
+				Logger.getLogger("pp.eclipse.parse").log(Level.FINER, "Parse failure", e);
 			}
-		} catch (CoreException e) {
-			e.printStackTrace();
 		} finally {
 			if (content != null) {
 				try { 
