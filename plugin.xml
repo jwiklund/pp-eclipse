@@ -25,6 +25,13 @@
           id="pp.eclipse.command.OpenContentXMLCommand"
           name="Open Content by External Id"> 	
 	</command>
+	<command
+          categoryId="org.eclipse.ui.category.navigate"
+          defaultHandler="pp.eclipse.command.OpenExternalIdCommand"
+          description="Browse External Id and select one to open"
+          id="pp.eclipse.command.OpenExternalIdCommand"
+          name="Open by External Id"> 	
+	</command>
    </extension>
    
    <extension point="org.eclipse.ui.bindings">
@@ -36,6 +43,11 @@
 	  </key>
 	  <key
             commandId="pp.eclipse.command.OpenContentXMLCommand"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+P">
+	  </key>
+	  <key
+            commandId="pp.eclipse.command.OpenExternalIdCommand"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M2+E">
 	  </key>

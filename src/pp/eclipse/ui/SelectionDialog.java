@@ -20,16 +20,16 @@ import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 
 import pp.eclipse.Activator;
 import pp.eclipse.common.IRepository;
-import pp.eclipse.common.Memento;
+import pp.eclipse.common.MementoHandler;
 import pp.eclipse.domain.Container;
 import pp.eclipse.domain.Item;
 
 public class SelectionDialog extends FilteredItemsSelectionDialog 
 {
 	private final IRepository repository;
-	private final Memento memento;
+	private final MementoHandler memento;
 
-    public SelectionDialog(Shell shell, IRepository repository, Memento memento)
+    public SelectionDialog(Shell shell, IRepository repository, MementoHandler memento)
     {
         super(shell, false);
         this.repository = repository;

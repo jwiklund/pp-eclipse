@@ -7,14 +7,21 @@ import org.eclipse.ui.IMemento;
 import pp.eclipse.domain.Item;
 import pp.eclipse.domain.ItemType;
 
-public class Memento {
+public class MementoHandler {
     
     private final IContainer root;
     private final ItemType restricted;
 
-    public Memento(IContainer root, ItemType restricted) {
+    public MementoHandler(IContainer root, ItemType restricted) 
+    {
         this.root = root;
         this.restricted = restricted;
+    }
+    
+    public MementoHandler(IContainer root) 
+    {
+        this.root = root;
+        this.restricted = null;
     }
 
     public void store(Object object, IMemento memento) {
