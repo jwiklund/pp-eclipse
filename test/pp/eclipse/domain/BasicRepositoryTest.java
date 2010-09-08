@@ -10,9 +10,10 @@ import pp.eclipse.dummy.BaseProgressMonitor;
 import pp.eclipse.dummy.Path;
 import pp.eclipse.dummy.Resource;
 import pp.eclipse.open.Container;
+import pp.eclipse.open.Item;
 import pp.eclipse.open.ItemType;
 import pp.eclipse.open.Repository;
-import pp.eclipse.parse.ContentParser;
+import pp.eclipse.open.parse.ContentParser;
 
 public class BasicRepositoryTest {
 	

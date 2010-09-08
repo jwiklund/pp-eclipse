@@ -1,8 +1,9 @@
-package pp.eclipse.parse.content;
+package pp.eclipse.open.parse.content;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
 
 @XmlRootElement(name="content", namespace="http://www.polopoly.com/polopoly/cm/xmlio")
 public class Content {

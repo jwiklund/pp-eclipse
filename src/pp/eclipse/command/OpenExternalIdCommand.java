@@ -6,8 +6,8 @@ import org.eclipse.swt.widgets.Shell;
 import pp.eclipse.open.DialogFactory;
 import pp.eclipse.open.MementoHandler;
 import pp.eclipse.open.Repository;
-import pp.eclipse.parse.ContentParser;
-import pp.eclipse.parse.TemplateParser;
+import pp.eclipse.open.parse.ContentParser;
+import pp.eclipse.open.parse.TemplateParser;
 import pp.eclipse.ui.SelectionDialog;
 
 public class OpenExternalIdCommand extends OpenCommandTemplate

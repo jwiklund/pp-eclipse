@@ -15,11 +15,12 @@ import javax.xml.stream.XMLStreamException;
 import org.junit.Before;
 import org.junit.Test;
 
-import pp.eclipse.domain.Item;
 import pp.eclipse.dummy.Resource;
-import pp.eclipse.parse.content.Content;
-import pp.eclipse.parse.content.ContentId;
-import pp.eclipse.parse.content.MetaData;
+import pp.eclipse.open.Item;
+import pp.eclipse.open.parse.ContentParser;
+import pp.eclipse.open.parse.content.Content;
+import pp.eclipse.open.parse.content.ContentId;
+import pp.eclipse.open.parse.content.MetaData;
 
 
 public class ParseTest {

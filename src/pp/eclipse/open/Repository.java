@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import pp.eclipse.parse.Parser;
+import pp.eclipse.open.parse.Parser;
 
 public class Repository
 {

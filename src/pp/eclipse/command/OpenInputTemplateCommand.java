@@ -7,7 +7,7 @@ import pp.eclipse.open.DialogFactory;
 import pp.eclipse.open.ItemType;
 import pp.eclipse.open.MementoHandler;
 import pp.eclipse.open.Repository;
-import pp.eclipse.parse.TemplateParser;
+import pp.eclipse.open.parse.TemplateParser;
 import pp.eclipse.ui.SelectionDialog;
 
 public class OpenInputTemplateCommand extends OpenCommandTemplate

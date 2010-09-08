@@ -1,4 +1,4 @@
-package pp.eclipse.parse;
+package pp.eclipse.open.parse;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import javax.xml.stream.events.XMLEvent;
 
 import pp.eclipse.open.Item;
 import pp.eclipse.open.ItemType;
-import pp.eclipse.parse.content.Content;
+import pp.eclipse.open.parse.content.Content;
 
 public class ContentParser implements Parser {
 	
