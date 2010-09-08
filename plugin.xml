@@ -39,17 +39,17 @@
             commandId="pp.eclipse.command.OpenInputTemplateCommand"
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+I">
+            sequence="M1+M3+I">
 	  </key>
 	  <key
             commandId="pp.eclipse.command.OpenContentXMLCommand"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+P">
+            sequence="M1+M3+P">
 	  </key>
 	  <key
             commandId="pp.eclipse.command.OpenExternalIdCommand"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+E">
+            sequence="M1+M3+E">
 	  </key>
       <key
             commandId="pp-eclipse.command.ImportContentXML"
