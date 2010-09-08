@@ -1,4 +1,4 @@
 Experimental improvement of the Polopoly eclipse plugin.
 
-Use Ctrl+Alt+E to open by externalid (Open by External Id)
-Use Alt+Shift+X I to import currently active file as content XML (Command name Import Content XML)
+Use Ctrl+Alt+E to open by externalid (Command name: Open by External Id)
+Use Alt+Shift+X I to import currently active file as content XML (Command name: Import Content XML)
