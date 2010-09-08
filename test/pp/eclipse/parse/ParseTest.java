@@ -17,7 +17,7 @@ import org.junit.Test;
 
 import pp.eclipse.dummy.Resource;
 import pp.eclipse.open.Item;
-import pp.eclipse.open.parse.ContentParser;
+import pp.eclipse.open.parse.Parser;
 import pp.eclipse.open.parse.content.Content;
 import pp.eclipse.open.parse.content.ContentId;
 import pp.eclipse.open.parse.content.MetaData;
@@ -70,7 +70,7 @@ public class ParseTest {
 		throws XMLStreamException, JAXBException 
 	{
 		StringReader reader = new StringReader(data);
-		List<Item> content = new ContentParser(context.createUnmarshaller()).parse(new BufferedReader(reader));
+		List<Item> content = new Parser(context.createUnmarshaller()).parse(new BufferedReader(reader));
 		return content;
 	}
 }

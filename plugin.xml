@@ -4,13 +4,6 @@
 
    <extension
          point="org.eclipse.ui.commands">
-   	<command
-          categoryId="org.eclipse.ui.category.navigate"
-          defaultHandler="pp.eclipse.command.OpenTemplateCommand"
-          description="Browse Input Templates and select one to open"
-          id="pp.eclipse.command.OpenTemplateCommand"
-          name="Open Input/Output Template"> 	
-	</command>
     <command
           categoryId="org.eclipse.ui.category.file"
           defaultHandler="pp.eclipse.command.ImportCommand"
@@ -18,13 +11,6 @@
           id="pp-eclipse.command.ImportContentXML"
           name="Import Content XML">
     </command>
-	<command
-          categoryId="org.eclipse.ui.category.navigate"
-          defaultHandler="pp.eclipse.command.OpenContentXMLCommand"
-          description="Browse Content External Id and select one to open"
-          id="pp.eclipse.command.OpenContentXMLCommand"
-          name="Open Content by External Id"> 	
-	</command>
 	<command
           categoryId="org.eclipse.ui.category.navigate"
           defaultHandler="pp.eclipse.command.OpenExternalIdCommand"
@@ -35,17 +21,6 @@
    </extension>
    
    <extension point="org.eclipse.ui.bindings">
-      <key
-            commandId="pp.eclipse.command.OpenTemplateCommand"
-            contextId="org.eclipse.ui.contexts.window"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M3+I">
-	  </key>
-	  <key
-            commandId="pp.eclipse.command.OpenContentXMLCommand"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M3+P">
-	  </key>
 	  <key
             commandId="pp.eclipse.command.OpenExternalIdCommand"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
