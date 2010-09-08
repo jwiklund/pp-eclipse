@@ -8,11 +8,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import pp.eclipse.domain.InputTemplate;
+import pp.eclipse.domain.Item;
+import pp.eclipse.domain.ItemType;
 
-public class TemplateParser implements Parser<InputTemplate> {
+public class TemplateParser implements Parser {
 	
-	public List<InputTemplate> parse(BufferedReader reader) 
+	public List<Item> parse(BufferedReader reader) 
 		throws IOException 
 	{
         int[] lineno = new int[1];
@@ -22,12 +23,12 @@ public class TemplateParser implements Parser<InputTemplate> {
         }
         String line = null;
         Pattern pattern = Pattern.compile("<input-template[^>]+name=\"([^\"]+)\"");
-        List<InputTemplate> templates = new ArrayList<InputTemplate>();
+        List<Item> templates = new ArrayList<Item>();
         while ((line = reader.readLine()) != null) {
             lineno[0] = lineno[0] + 1;
             Matcher matcher = pattern.matcher(line);
             while (matcher.find()) {
-                templates.add(new InputTemplate(matcher.group(1), null, lineno[0]));
+                templates.add(new Item(ItemType.InputTemplate, matcher.group(1), null, lineno[0]));
             }
         }
         return templates;

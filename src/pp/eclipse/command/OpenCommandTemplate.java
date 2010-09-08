@@ -13,17 +13,16 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
 import pp.eclipse.Activator;
-import pp.eclipse.common.DefinedItem;
-import pp.eclipse.common.DefiningFile;
 import pp.eclipse.common.DialogFactory;
+import pp.eclipse.domain.Item;
 import pp.eclipse.ui.SelectionDialog;
 
-public abstract class OpenCommandTemplate<Item extends DefinedItem, Container extends DefiningFile<Item>> 
+public abstract class OpenCommandTemplate
 	extends AbstractHandler 
 {
-	private DialogFactory<Item, Container> dialogFactory;
+	private DialogFactory dialogFactory;
 	
-	public OpenCommandTemplate(DialogFactory<Item, Container> dialogFactory) 
+	public OpenCommandTemplate(DialogFactory dialogFactory) 
 	{
 		this.dialogFactory = dialogFactory;
 	}
@@ -34,7 +33,7 @@ public abstract class OpenCommandTemplate<Item extends DefinedItem, Container ex
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         Activator activator = Activator.getDefault();
         
-		SelectionDialog<Item, Container> dialog = dialogFactory.createDialog(activator.getWorkspaceRoot());
+		SelectionDialog dialog = dialogFactory.createDialog(activator.getWorkspaceRoot());
         Item item = dialog.select();
         if (item == null) {
         	return null;

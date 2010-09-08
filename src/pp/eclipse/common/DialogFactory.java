@@ -4,7 +4,7 @@ import org.eclipse.core.resources.IContainer;
 
 import pp.eclipse.ui.SelectionDialog;
 
-public interface DialogFactory<Item extends DefinedItem, Container extends DefiningFile<Item>>
+public interface DialogFactory
 {
-	SelectionDialog<Item, Container> createDialog(IContainer root); 
+	SelectionDialog createDialog(IContainer root); 
 }

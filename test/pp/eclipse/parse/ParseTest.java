@@ -15,9 +15,8 @@ import javax.xml.stream.XMLStreamException;
 import org.junit.Before;
 import org.junit.Test;
 
-import pp.eclipse.domain.ExternalId;
+import pp.eclipse.domain.Item;
 import pp.eclipse.dummy.Resource;
-import pp.eclipse.parse.ContentParser;
 import pp.eclipse.parse.content.Content;
 import pp.eclipse.parse.content.ContentId;
 import pp.eclipse.parse.content.MetaData;
@@ -46,7 +45,7 @@ public class ParseTest {
 	public void parse_content_should_return_id()
 		throws Exception
 	{
-		List<ExternalId> content = parse(Resource.content("", "test").content);
+		List<Item> content = parse(Resource.content("", "test").content);
 		assertEquals("test", content.get(0).externalid());
 	}
 	
@@ -54,7 +53,7 @@ public class ParseTest {
 	public void parse_content_should_return_found_on_line()
 		throws Exception
 	{
-		List<ExternalId> content = parse(Resource.content("", "test").content);
+		List<Item> content = parse(Resource.content("", "test").content);
 		assertEquals(3, content.get(0).line());
 	}
 	
@@ -62,15 +61,15 @@ public class ParseTest {
 	public void parse_content_should_skip_input_templates()
 		throws Exception
 	{
-		List<ExternalId> content = parse(Resource.inputTemplate("", "test").content);
+		List<Item> content = parse(Resource.inputTemplate("", "test").content);
 		assertEquals(0, content.size());
 	}
 	
-	private List<ExternalId> parse(String data)
+	private List<Item> parse(String data)
 		throws XMLStreamException, JAXBException 
 	{
 		StringReader reader = new StringReader(data);
-		List<ExternalId> content = new ContentParser(context.createUnmarshaller()).parse(new BufferedReader(reader));
+		List<Item> content = new ContentParser(context.createUnmarshaller()).parse(new BufferedReader(reader));
 		return content;
 	}
 }

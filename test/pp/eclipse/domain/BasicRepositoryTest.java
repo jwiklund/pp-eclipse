@@ -6,8 +6,7 @@ import static org.junit.Assert.assertEquals;
 import org.eclipse.core.resources.IContainer;
 import org.junit.Test;
 
-import pp.eclipse.common.NoCache;
-import pp.eclipse.common.Repository;
+import pp.eclipse.common.SingleRepository;
 import pp.eclipse.dummy.BaseProgressMonitor;
 import pp.eclipse.dummy.Path;
 import pp.eclipse.dummy.Resource;
@@ -20,9 +19,9 @@ public class BasicRepositoryTest {
 		throws Exception
 	{
 		IContainer root = Resource.root(Resource.content("simple.xml", "p.simple"));
-		Repository<ExternalId, ContentXML>target = new Repository<ExternalId, ContentXML>(root, new NoCache(), new ContentXMLFactory(root), new ContentParser());
-		ExternalId externalid = new ExternalId("p.simple", Path.path("/simple.xml"), 3);
-		assertEquals(singletonList(new ContentXML(Path.path("/simple.xml"), 0, singletonList(externalid))), 
+		SingleRepository target = new SingleRepository(root, new ContentParser());
+		Item externalid = new Item(ItemType.Content, "p.simple", Path.path("/simple.xml"), 3);
+		assertEquals(singletonList(new Container(Path.path("/simple.xml"), 0, singletonList(externalid))), 
 				target.list(new BaseProgressMonitor()));
 	}
 }

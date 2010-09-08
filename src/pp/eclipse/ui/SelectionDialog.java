@@ -19,28 +19,25 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 
 import pp.eclipse.Activator;
-import pp.eclipse.common.DefinedItem;
-import pp.eclipse.common.DefiningFactory;
-import pp.eclipse.common.DefiningFile;
 import pp.eclipse.common.IRepository;
+import pp.eclipse.common.Memento;
+import pp.eclipse.domain.Container;
+import pp.eclipse.domain.Item;
 
-public class SelectionDialog<Item extends DefinedItem, Container extends DefiningFile<Item>> extends FilteredItemsSelectionDialog 
+public class SelectionDialog extends FilteredItemsSelectionDialog 
 {
-	private final DefiningFactory<Item, Container> factory;
-	private final IRepository<Item, Container> repository;
+	private final IRepository repository;
+	private final Memento memento;
 
-    public SelectionDialog(Shell shell, 
-    		DefiningFactory<Item, Container> factory, 
-    		IRepository<Item, Container> repository)
+    public SelectionDialog(Shell shell, IRepository repository, Memento memento)
     {
         super(shell, false);
-		this.factory = factory;
         this.repository = repository;
+        this.memento = memento;
         setSelectionHistory(new DefiningSelectionHistory());
         setListLabelProvider(new DefiningListLabelProvider());
     }
     
-    @SuppressWarnings("unchecked")
 	public Item select() {
     	setInitialPattern("p.");
         open();
@@ -54,13 +51,13 @@ public class SelectionDialog<Item extends DefinedItem, Container extends Definin
     protected class DefiningSelectionHistory extends SelectionHistory {
 
 		@Override
-		protected Object restoreItemFromMemento(IMemento memento) {
-			return factory.restore(memento);
+		protected Object restoreItemFromMemento(IMemento imemento) {
+			return memento.restore(imemento);
 		}
 
 		@Override
-		protected void storeItemToMemento(Object item, IMemento memento) {
-			factory.store(item, memento);
+		protected void storeItemToMemento(Object item, IMemento imemento) {
+		    memento.store(item, imemento);
 		}
     }
     
@@ -70,8 +67,8 @@ public class SelectionDialog<Item extends DefinedItem, Container extends Definin
 
 		@Override
 		public StyledString getStyledText(Object element) {
-			if (element instanceof DefinedItem) {
-				DefinedItem item = (DefinedItem) element;
+			if (element instanceof Item) {
+			    Item item = (Item) element;
 	            StyledString result = new StyledString(item.externalid());
 	            if (isDuplicateElement(element)) {
 	                String path = " - " + item.path().makeRelative().toString();
@@ -103,14 +100,14 @@ public class SelectionDialog<Item extends DefinedItem, Container extends Definin
             @Override
             public boolean matchItem(Object arg0)
             {
-                return matches(((DefinedItem) arg0).externalid());
+                return matches(((Item) arg0).externalid());
             }
             
             @Override
             public boolean isConsistentItem(Object arg0)
             {
-                if (arg0 instanceof DefinedItem) {
-                	DefinedItem item = (DefinedItem) arg0;
+                if (arg0 instanceof Item) {
+                    Item item = (Item) arg0;
                     return repository.validate(item);
                 }
                 return false;
@@ -123,7 +120,7 @@ public class SelectionDialog<Item extends DefinedItem, Container extends Definin
         ItemsFilter filter, IProgressMonitor progressMonitor) throws CoreException
     {
         for (Container items : repository.list(progressMonitor)) {
-            for (Item item : items.defines()) {
+            for (Item item : items.items()) {
                 contentProvider.add(item, filter);
             }
         }
@@ -144,7 +141,7 @@ public class SelectionDialog<Item extends DefinedItem, Container extends Definin
     @Override
     public String getElementName(Object item)
     {
-        return ((DefinedItem) item).externalid();
+        return ((Item) item).externalid();
     }
 
     @Override
@@ -154,7 +151,7 @@ public class SelectionDialog<Item extends DefinedItem, Container extends Definin
             @Override
             public int compare(Object o1, Object o2)
             {
-                return ((DefinedItem) o1).compareTo((DefinedItem) o2);
+                return ((Item) o1).compareTo((Item) o2);
             }
         };
     }

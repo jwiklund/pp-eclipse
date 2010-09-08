@@ -6,9 +6,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import pp.eclipse.common.Cache;
-import pp.eclipse.common.NoCache;
-
 
 /**
  * The activator class controls the plug-in life cycle
@@ -33,12 +30,6 @@ public class Activator extends AbstractUIPlugin {
 //        The copies in the build directory should be marked as derived (IResource.setDerived()). 
 //        Derived resources are then filtered out of the open resource dialog. Whoever is copying those resources should be marking the 
 //        copies as derived - the Java builder does this, for example.
-    }
-    
-    private Cache cache = new NoCache();
-    
-    public Cache cache() {
-        return cache;
     }
 
     public IWorkspaceRoot getWorkspaceRoot() {

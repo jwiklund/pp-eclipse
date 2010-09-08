@@ -15,10 +15,11 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import pp.eclipse.domain.ExternalId;
+import pp.eclipse.domain.Item;
+import pp.eclipse.domain.ItemType;
 import pp.eclipse.parse.content.Content;
 
-public class ContentParser implements Parser<ExternalId> {
+public class ContentParser implements Parser {
 	
 	private final Unmarshaller unmarshaller;
 
@@ -40,7 +41,7 @@ public class ContentParser implements Parser<ExternalId> {
 		}
 	}
 
-	public List<ExternalId> parse(BufferedReader reader) 
+	public List<Item> parse(BufferedReader reader) 
 		throws XMLStreamException, JAXBException 
 	{
 		XMLEventReader source = xmlif.createXMLEventReader(reader);
@@ -51,14 +52,14 @@ public class ContentParser implements Parser<ExternalId> {
 		int[] lineOfContentStart = new int[1];
 		lineOfContentStart[0] = -1;
 		XMLEventReader contentStart = xmlif.createFilteredReader(source, createContentFilter(lineOfContentStart));
-		List<ExternalId> contents = new ArrayList<ExternalId>();
+		List<Item> contents = new ArrayList<Item>();
 		while (contentStart.peek() != null) {
 			Content content = (Content) unmarshaller.unmarshal(source);
 			addLineInfo(content, lineOfContentStart);
 			if (content != null && content.metadata != null && 
 					content.metadata.contentid != null && 
 					content.metadata.contentid.externalid != null) {
-				contents.add(new ExternalId(content.metadata.contentid.externalid, null, content.foundOnLine));
+				contents.add(new Item(ItemType.Content, content.metadata.contentid.externalid, null, content.foundOnLine));
 			}
 		}
 		return contents;
