@@ -3,10 +3,10 @@ package pp.eclipse.command;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.swt.widgets.Shell;
 
-import pp.eclipse.common.DialogFactory;
-import pp.eclipse.common.MementoHandler;
-import pp.eclipse.common.Repository;
-import pp.eclipse.domain.ItemType;
+import pp.eclipse.open.DialogFactory;
+import pp.eclipse.open.ItemType;
+import pp.eclipse.open.MementoHandler;
+import pp.eclipse.open.Repository;
 import pp.eclipse.parse.ContentParser;
 import pp.eclipse.ui.SelectionDialog;
 

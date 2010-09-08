@@ -1,4 +1,4 @@
-package pp.eclipse.common;
+package pp.eclipse.open;
 
 import org.eclipse.core.resources.IContainer;
 

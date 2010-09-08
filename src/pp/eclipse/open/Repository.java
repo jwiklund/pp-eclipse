@@ -1,4 +1,4 @@
-package pp.eclipse.common;
+package pp.eclipse.open;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -19,11 +19,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import pp.eclipse.domain.Container;
-import pp.eclipse.domain.Item;
 import pp.eclipse.parse.Parser;
 
-public class Repository implements IRepository
+public class Repository
 {
 	private final IContainer root;
 	private final Parser[] parsers;
@@ -34,7 +32,6 @@ public class Repository implements IRepository
 		this.parsers = parsers;
 	}
 	
-	@Override
 	public List<Container> list(final IProgressMonitor monitor) 
 		throws CoreException
 	{
@@ -59,7 +56,6 @@ public class Repository implements IRepository
 	    return containers;
 	}
 	       
-	@Override
 	public boolean validate(Item item) {
 		return true;
 	}

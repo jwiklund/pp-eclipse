@@ -1,6 +1,8 @@
-package pp.eclipse.domain;
+package pp.eclipse.open;
 
 import org.eclipse.core.runtime.IPath;
+
+import pp.eclipse.open.ItemType;
 
 public class Item implements Comparable<Item> {
     private final ItemType type;

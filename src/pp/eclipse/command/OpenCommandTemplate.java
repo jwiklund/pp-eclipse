@@ -13,8 +13,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
 import pp.eclipse.Activator;
-import pp.eclipse.common.DialogFactory;
-import pp.eclipse.domain.Item;
+import pp.eclipse.open.DialogFactory;
+import pp.eclipse.open.Item;
 import pp.eclipse.ui.SelectionDialog;
 
 public abstract class OpenCommandTemplate

@@ -19,17 +19,17 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 
 import pp.eclipse.Activator;
-import pp.eclipse.common.IRepository;
-import pp.eclipse.common.MementoHandler;
-import pp.eclipse.domain.Container;
-import pp.eclipse.domain.Item;
+import pp.eclipse.open.Container;
+import pp.eclipse.open.Item;
+import pp.eclipse.open.MementoHandler;
+import pp.eclipse.open.Repository;
 
 public class SelectionDialog extends FilteredItemsSelectionDialog 
 {
-	private final IRepository repository;
+	private final Repository repository;
 	private final MementoHandler memento;
 
-    public SelectionDialog(Shell shell, IRepository repository, MementoHandler memento)
+    public SelectionDialog(Shell shell, Repository repository, MementoHandler memento)
     {
         super(shell, false);
         this.repository = repository;

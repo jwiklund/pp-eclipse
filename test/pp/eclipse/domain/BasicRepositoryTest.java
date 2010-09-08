@@ -6,10 +6,12 @@ import static org.junit.Assert.assertEquals;
 import org.eclipse.core.resources.IContainer;
 import org.junit.Test;
 
-import pp.eclipse.common.Repository;
 import pp.eclipse.dummy.BaseProgressMonitor;
 import pp.eclipse.dummy.Path;
 import pp.eclipse.dummy.Resource;
+import pp.eclipse.open.Container;
+import pp.eclipse.open.ItemType;
+import pp.eclipse.open.Repository;
 import pp.eclipse.parse.ContentParser;
 
 public class BasicRepositoryTest {

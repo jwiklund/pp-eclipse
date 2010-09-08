@@ -1,11 +1,9 @@
-package pp.eclipse.common;
+package pp.eclipse.open;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IMemento;
 
-import pp.eclipse.domain.Item;
-import pp.eclipse.domain.ItemType;
 
 public class MementoHandler {
     

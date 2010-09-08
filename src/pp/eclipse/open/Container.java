@@ -1,8 +1,10 @@
-package pp.eclipse.domain;
+package pp.eclipse.open;
 
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
+
+import pp.eclipse.open.Item;
 
 public class Container {
     public final IPath path;

@@ -15,8 +15,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import pp.eclipse.domain.Item;
-import pp.eclipse.domain.ItemType;
+import pp.eclipse.open.Item;
+import pp.eclipse.open.ItemType;
 import pp.eclipse.parse.content.Content;
 
 public class ContentParser implements Parser {

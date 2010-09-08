@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import pp.eclipse.domain.Item;
-import pp.eclipse.domain.ItemType;
+import pp.eclipse.open.Item;
+import pp.eclipse.open.ItemType;
 
 public class TemplateParser implements Parser {
 	
