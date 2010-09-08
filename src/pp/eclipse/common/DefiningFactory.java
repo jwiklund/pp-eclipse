@@ -11,4 +11,6 @@ public interface DefiningFactory<Item extends DefinedItem, Container extends Def
 	
 	void store(Object item, IMemento memento);
 	Item restore(IMemento memento);
+
+    Class<Container> containerClass();
 }

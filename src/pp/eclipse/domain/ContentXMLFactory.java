@@ -49,4 +49,9 @@ public class ContentXMLFactory implements DefiningFactory<ExternalId, ContentXML
             return null;
         return new ExternalId(inputTemplate, path, lineno);
 	}
+
+    @Override
+    public Class<ContentXML> containerClass() {
+        return ContentXML.class;
+    }
 }

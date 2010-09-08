@@ -20,9 +20,9 @@
     </command>
 	<command
           categoryId="org.eclipse.ui.category.navigate"
-          defaultHandler="pp.eclipse.command.OpenExternalIdCommand"
+          defaultHandler="pp.eclipse.command.OpenContentXMLCommand"
           description="Browse Content External Id and select one to open"
-          id="pp.eclipse.command.OpenExternalIdCommand"
+          id="pp.eclipse.command.OpenContentXMLCommand"
           name="Open Content by External Id"> 	
 	</command>
    </extension>
@@ -35,7 +35,7 @@
             sequence="M1+M2+I">
 	  </key>
 	  <key
-            commandId="pp.eclipse.command.OpenExternalIdCommand"
+            commandId="pp.eclipse.command.OpenContentXMLCommand"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M2+E">
 	  </key>

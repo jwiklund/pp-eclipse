@@ -49,4 +49,9 @@ public class TemplateDefinitionFactory implements DefiningFactory<InputTemplate,
             return null;
         return new InputTemplate(inputTemplate, path, lineno);
 	}
+
+    @Override
+    public Class<TemplateDefinition> containerClass() {
+        return TemplateDefinition.class;
+    }
 }
