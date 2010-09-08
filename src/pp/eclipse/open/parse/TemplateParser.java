@@ -22,13 +22,17 @@ public class TemplateParser implements Parser {
             return Collections.emptyList();
         }
         String line = null;
-        Pattern pattern = Pattern.compile("<input-template[^>]+name=\"([^\"]+)\"");
+        Pattern pattern = Pattern.compile("<(input-template|output-template)[^>]+name=\"([^\"]+)\"");
         List<Item> templates = new ArrayList<Item>();
         while ((line = reader.readLine()) != null) {
             lineno[0] = lineno[0] + 1;
             Matcher matcher = pattern.matcher(line);
             while (matcher.find()) {
-                templates.add(new Item(ItemType.InputTemplate, matcher.group(1), null, lineno[0]));
+                ItemType type = ItemType.InputTemplate;
+                if ("output-template".equals(matcher.group(1))) {
+                    type = ItemType.OutputTemplate;
+                }
+                templates.add(new Item(type, matcher.group(2), null, lineno[0]));
             }
         }
         return templates;

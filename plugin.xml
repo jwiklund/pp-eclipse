@@ -6,10 +6,10 @@
          point="org.eclipse.ui.commands">
    	<command
           categoryId="org.eclipse.ui.category.navigate"
-          defaultHandler="pp.eclipse.command.OpenInputTemplateCommand"
+          defaultHandler="pp.eclipse.command.OpenTemplateCommand"
           description="Browse Input Templates and select one to open"
-          id="pp.eclipse.command.OpenInputTemplateCommand"
-          name="Open Input Template"> 	
+          id="pp.eclipse.command.OpenTemplateCommand"
+          name="Open Input/Output Template"> 	
 	</command>
     <command
           categoryId="org.eclipse.ui.category.file"
@@ -36,7 +36,7 @@
    
    <extension point="org.eclipse.ui.bindings">
       <key
-            commandId="pp.eclipse.command.OpenInputTemplateCommand"
+            commandId="pp.eclipse.command.OpenTemplateCommand"
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M3+I">

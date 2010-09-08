@@ -10,15 +10,15 @@ import pp.eclipse.open.Repository;
 import pp.eclipse.open.parse.TemplateParser;
 import pp.eclipse.ui.SelectionDialog;
 
-public class OpenInputTemplateCommand extends OpenCommandTemplate
+public class OpenTemplateCommand extends OpenCommandTemplate
 {
-	public OpenInputTemplateCommand() {
+	public OpenTemplateCommand() {
 		super(new DialogFactory() {
 			@Override
 			public SelectionDialog createDialog(IContainer root) {
 				Shell shell = new Shell();
 				Repository repository = new Repository(root, new TemplateParser());
-				SelectionDialog dialog = new SelectionDialog(shell, repository, new MementoHandler(root, ItemType.InputTemplate));
+				SelectionDialog dialog = new SelectionDialog(shell, repository, new MementoHandler(root, ItemType.Content, false));
 				dialog.setTitle("Filtered TemplateDefinition Dialog");
 				return dialog;
 			}
