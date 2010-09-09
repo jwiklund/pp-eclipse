@@ -9,7 +9,7 @@ public class Item implements Comparable<Item> {
     private final String externalid;
     private final IPath path;
     private final int line;
-    
+
     public Item(ItemType type, String externalid, IPath path, int line) {
         this.type = type;
         this.externalid = externalid;
@@ -20,32 +20,32 @@ public class Item implements Comparable<Item> {
     public ItemType type() {
         return type;
     }
-    
+
     public String externalid() {
         return externalid;
     }
-    
+
     public Item path(IPath newPath) {
         return new Item(type, externalid, newPath, line);
     }
-    
+
     public IPath path() {
         return path;
     }
-    
+
     public Item line(int newline) {
         return new Item(type, externalid, path, newline);
     }
-    
+
     public int line() {
         return line;
     }
-    
+
     @Override
     public String toString() {
         return externalid + " " + type + " " + path + ":" + line;
     }
-    
+
     public int compareTo(Item o) {
         if (!externalid.equals(o.externalid)) {
             return externalid.compareTo(o.externalid);

@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,19 +25,21 @@ import pp.eclipse.open.parse.Parser;
 public class Repository
 {
 	private final IContainer root;
-	private final Parser[] parsers;
+	private final Parser parser;
 	private final Map<IPath, Container> cache = new HashMap<IPath, Container>();
 
-	public Repository(IContainer root, Parser... parsers) 
+	public Repository(IContainer root, Parser parser)
 	{
 		this.root = root;
-		this.parsers = parsers;
+		this.parser = parser;
 	}
-	
-	public List<Container> list(final IProgressMonitor monitor) 
+
+	public List<Container> list(final IProgressMonitor monitor)
 		throws CoreException
 	{
 	    final List<Container> containers = new ArrayList<Container>();
+	    System.out.println("Started");
+	    //long started = System.currentTimeMillis();
 	    root.accept(new IResourceProxyVisitor() {
 	        public boolean visit(IResourceProxy proxy) throws CoreException {
 	            if (proxy.getName().matches(".*\\.xml")) {
@@ -64,14 +65,16 @@ public class Repository
 	        }
 
 	    }, 0);
+	    //System.out.println("Done " + ((System.currentTimeMillis() - started) / 1000.0));
+	    //System.out.println("Read " + cache.size());
 	    return containers;
 	}
-	       
+
 	public boolean validate(Item item) {
 		return true;
 	}
 
-    private Container read(IFile iResource) 
+    private Container read(IFile iResource)
 
     {
         InputStream content = null;
@@ -82,16 +85,8 @@ public class Repository
                 charset = "UTF8";
             }
             try {
-                List<Item> parsed = Collections.emptyList();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(content, charset));
-                reader.mark(1024);
-                for (Parser parser : parsers) {
-                    reader.reset();
-                    parsed = parser.parse(reader);
-                    if (parsed.size() > 0) { 
-                        break;
-                    }
-                }
+                List<Item> parsed = parser.parse(reader);
                 List<Item> updated = new ArrayList<Item>();
                 IPath fullPath = iResource.getFullPath();
                 for (Item parse : parsed) {
@@ -111,7 +106,7 @@ public class Repository
 			Logger.getLogger("pp.eclipse.parse").log(Level.FINER, "Read failure", e);
 		} finally {
             if (content != null) {
-                try { 
+                try {
                     content.close();
                 } catch (Exception e) {
                     // Skip

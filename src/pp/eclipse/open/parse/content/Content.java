@@ -44,5 +44,5 @@ public class Content {
 		} else if (!metadata.equals(other.metadata))
 			return false;
 		return true;
-	}	
+	}
 }

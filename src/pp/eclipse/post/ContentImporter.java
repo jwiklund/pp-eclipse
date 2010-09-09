@@ -9,8 +9,8 @@ import java.net.MalformedURLException;
 
 public class ContentImporter {
 
-	public ImportResult importContent(Content content, Host host) 
-		throws MalformedURLException, IOException 
+	public ImportResult importContent(Content content, Host host)
+		throws MalformedURLException, IOException
 	{
 		HttpURLConnection connection = (HttpURLConnection) host.createURL().openConnection();
 		connection.setDoInput(true);
@@ -21,7 +21,7 @@ public class ContentImporter {
 		OutputStream writeTo = connection.getOutputStream();
 		flush(content.stream, writeTo);
 		writeTo.close();
-		
+
 		int result = connection.getResponseCode();
 		InputStream readFrom;
 		if (result >= 200 && result <= 300) {
@@ -34,7 +34,7 @@ public class ContentImporter {
 		return importResult;
 	}
 
-	private String read(InputStream readFrom, String encoding) throws IOException 
+	private String read(InputStream readFrom, String encoding) throws IOException
 	{
 		ByteArrayOutputStream writer = new ByteArrayOutputStream();
 		flush(readFrom, writer);
@@ -47,13 +47,13 @@ public class ContentImporter {
 	private void flush(InputStream stream, OutputStream writeTo) throws IOException {
 		byte[] bytes = new byte[1024];
 		int len;
-		
+
 		while ((len = stream.read(bytes)) > 0) {
 			writeTo.write(bytes, 0, len);
 		}
-		
+
 		writeTo.flush();
 	}
 
-	
+
 }

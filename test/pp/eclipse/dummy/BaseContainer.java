@@ -46,51 +46,51 @@ public class BaseContainer extends BaseResource implements IContainer {
         return null;
     }
 
-    
+
     public IFolder getFolder(IPath path) {
 
         return null;
     }
 
-    
+
     public IResource[] members() throws CoreException {
 
         return null;
     }
 
-    
+
     public IResource[] members(boolean includePhantoms) throws CoreException {
 
         return null;
     }
 
-    
+
     public IResource[] members(int memberFlags) throws CoreException {
 
         return null;
     }
 
-    
+
     public IFile[] findDeletedMembersWithHistory(int depth,
             IProgressMonitor monitor) throws CoreException {
 
         return null;
     }
 
-    
+
     public void setDefaultCharset(String charset) throws CoreException {
 
-        
+
     }
 
-    
+
     public void setDefaultCharset(String charset, IProgressMonitor monitor)
             throws CoreException {
 
-        
+
     }
 
-    
+
     public IResourceFilterDescription createFilter(int type,
             FileInfoMatcherDescription matcherDescription, int updateFlags,
             IProgressMonitor monitor) throws CoreException {
@@ -98,7 +98,7 @@ public class BaseContainer extends BaseResource implements IContainer {
         return null;
     }
 
-    
+
     public IResourceFilterDescription[] getFilters() throws CoreException {
 
         return null;

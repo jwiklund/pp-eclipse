@@ -6,5 +6,5 @@ import pp.eclipse.ui.SelectionDialog;
 
 public interface DialogFactory
 {
-	SelectionDialog createDialog(IContainer root); 
+	SelectionDialog createDialog(IContainer root);
 }

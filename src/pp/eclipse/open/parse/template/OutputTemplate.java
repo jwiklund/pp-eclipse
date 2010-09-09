@@ -15,10 +15,10 @@ public class OutputTemplate {
     public OutputTemplate(String externalid) {
     	attributes.put(externalidQName(), externalid);
 	}
-    
+
 	public OutputTemplate() {
     }
-	
+
 	public String externalid() {
     	String string = attributes.get(externalidQName());
     	if (string == null) {
@@ -26,11 +26,11 @@ public class OutputTemplate {
     	}
 		return string;
     }
-	
+
 	private QName externalidQName() {
 		return new QName("http://www.polopoly.com/polopoly/cm/app/xml", "name");
 	}
-    
+
     @Override
     public String toString() {
         return "OutputTemplate [externalid=" + externalid() + "]";

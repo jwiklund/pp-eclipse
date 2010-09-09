@@ -18,20 +18,20 @@ import pp.eclipse.open.Item;
 import pp.eclipse.ui.SelectionDialog;
 
 public abstract class OpenCommandTemplate
-	extends AbstractHandler 
+	extends AbstractHandler
 {
 	private DialogFactory dialogFactory;
-	
-	public OpenCommandTemplate(DialogFactory dialogFactory) 
+
+	public OpenCommandTemplate(DialogFactory dialogFactory)
 	{
 		this.dialogFactory = dialogFactory;
 	}
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
+
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         Activator activator = Activator.getDefault();
-        
+
 		SelectionDialog dialog = dialogFactory.createDialog(activator.getWorkspaceRoot());
         Item item = dialog.select();
         if (item == null) {

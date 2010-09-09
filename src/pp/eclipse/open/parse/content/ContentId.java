@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
 public class ContentId {
 	@XmlElement(name="externalid", namespace="http://www.polopoly.com/polopoly/cm/xmlio")
 	public String externalid;
-	
+
 	public ContentId(String externalid) {
 		this.externalid = externalid;
 	}

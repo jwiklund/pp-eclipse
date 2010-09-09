@@ -32,11 +32,11 @@ import pp.eclipse.post.ContentImporter;
 import pp.eclipse.post.Host;
 import pp.eclipse.post.ImportResult;
 
-public class ImportCommand extends AbstractHandler 
+public class ImportCommand extends AbstractHandler
 {
     final static String CONSOLE_NAME = "Import ContentXML";
 
-	public Object execute(ExecutionEvent event) throws ExecutionException 
+	public Object execute(ExecutionEvent event) throws ExecutionException
 	{
 		Object activeEditor = HandlerUtil.getVariable(event, ISources.ACTIVE_EDITOR_NAME);
 		if (activeEditor instanceof IEditorPart) {
@@ -54,7 +54,7 @@ public class ImportCommand extends AbstractHandler
 		return null;
 	}
 
-	private void importContent(IFile file) throws PartInitException, UnsupportedEncodingException 
+	private void importContent(IFile file) throws PartInitException, UnsupportedEncodingException
 	{
 		MessageConsole console = findConsole(CONSOLE_NAME);
 		Host host = new Host("http://localhost:8080/polopoly/import", "sysadmin", "sysadmin");
@@ -94,7 +94,7 @@ public class ImportCommand extends AbstractHandler
         }
 	}
 
-    private String handleResult(ImportResult result) 
+    private String handleResult(ImportResult result)
     {
         if (result.status >= 200 && result.status <= 300) {
             return result.data;
@@ -102,7 +102,7 @@ public class ImportCommand extends AbstractHandler
         String error = result.data;
         if (error == null) {
             return "Failure, " + result.status + " and no response" ;
-        } 
+        }
         int errorStart = -1;
         int errorEnd = -1;
         String startMarker = "The text below is technical information about the problem. This text is very important to attach to any reports about the error";
@@ -127,7 +127,7 @@ public class ImportCommand extends AbstractHandler
         return error;
     }
 
-    private void show(MessageConsole console) throws PartInitException 
+    private void show(MessageConsole console) throws PartInitException
 	{
 	    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	    String id = IConsoleConstants.ID_CONSOLE_VIEW;

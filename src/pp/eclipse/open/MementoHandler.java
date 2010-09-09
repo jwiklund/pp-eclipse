@@ -6,24 +6,24 @@ import org.eclipse.ui.IMemento;
 
 
 public class MementoHandler {
-    
+
     private final IContainer root;
     private final ItemType restricted;
     private final boolean required;
-    
-    public MementoHandler(IContainer root, ItemType restricted, boolean required) 
+
+    public MementoHandler(IContainer root, ItemType restricted, boolean required)
     {
         this.root = root;
         this.restricted = restricted;
         this.required = required;
     }
 
-    public MementoHandler(IContainer root, ItemType restricted) 
+    public MementoHandler(IContainer root, ItemType restricted)
     {
-        this(root, restricted, true); 
+        this(root, restricted, true);
     }
-    
-    public MementoHandler(IContainer root) 
+
+    public MementoHandler(IContainer root)
     {
         this(root, null);
     }
@@ -37,7 +37,7 @@ public class MementoHandler {
             memento.putString("type", item.type().name());
             memento.putString("externalId", item.externalid());
             memento.putString("fullPath", item.path().toString());
-            memento.putInteger("lineno", item.line());      
+            memento.putInteger("lineno", item.line());
         }
     }
 

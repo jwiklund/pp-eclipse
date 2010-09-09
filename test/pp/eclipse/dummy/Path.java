@@ -11,12 +11,12 @@ public class Path {
             public String toString() {
                 return path;
             }
-            
+
             @Override
             public boolean equals(Object obj) {
             	return String.valueOf(this).equals(String.valueOf(obj));
             }
-            
+
             @Override
             public int hashCode() {
             	return String.valueOf(this).hashCode();

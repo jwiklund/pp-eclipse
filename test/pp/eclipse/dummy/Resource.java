@@ -11,18 +11,18 @@ import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
-public class Resource 
+public class Resource
 {
-	
-	private Resource() 
+
+	private Resource()
 	{
 	}
-	
+
 	public static IContainer root(final Resource.Entry... entries) {
 		return new BaseContainer() {
 			@Override
-			public void accept(IResourceProxyVisitor visitor, int memberFlags) 
-				throws CoreException 
+			public void accept(IResourceProxyVisitor visitor, int memberFlags)
+				throws CoreException
 			{
 				for (Entry entry : entries) {
 					visitor.visit(entry.proxy());
@@ -30,18 +30,18 @@ public class Resource
 			}
 		};
 	}
-	
-    public static IContainer rootWithUpdate(final IContainer root, final Entry... updateTemplates) 
+
+    public static IContainer rootWithUpdate(final IContainer root, final Entry... updateTemplates)
     {
         return new BaseContainer() {
             @Override
-            public void accept(IResourceProxyVisitor visitor, int memberFlags) throws CoreException 
+            public void accept(IResourceProxyVisitor visitor, int memberFlags) throws CoreException
             {
                 root.accept(visitor, memberFlags);
             }
-            
+
             @Override
-            public IResource findMember(IPath path) 
+            public IResource findMember(IPath path)
             {
                 for (Entry entry : updateTemplates) {
                     final Entry theEntry = entry;
@@ -60,28 +60,33 @@ public class Resource
         };
     }
 
-	
-	public static Entry empty(String filename) 
+
+	public static Entry empty(String filename)
 	{
 		return new Entry(filename, "");
 	}
-	
-	public static Entry inputTemplate(String filename, String inputTemplate) 
+
+	public static Entry inputTemplate(String filename, String inputTemplate)
 	{
 		return new Entry(filename, templateDefinition(inputTemplate(inputTemplate)));
 	}
-	
-	public static Entry content(String filename, String externalid) 
+
+	public static Entry outputTemplate(String filename, String outputTemplate)
+	{
+	    return new Entry(filename, templateDefinition(outputTemplate(outputTemplate)));
+	}
+
+    public static Entry content(String filename, String externalid)
 	{
 		return new Entry(filename, batch(content(externalid)));
 	}
-	
-	public static Entry content(String filename, String externalid, String... contentreferences) 
+
+	public static Entry content(String filename, String externalid, String... contentreferences)
 	{
 		return new Entry(filename, batch(content(externalid, contentreferences)));
 	}
-	
-	private static String batch(String... contents) 
+
+	private static String batch(String... contents)
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -93,15 +98,15 @@ public class Resource
 		return sb.toString();
 	}
 
-	private static String content(String externalid, String... contentreferences) 
+	private static String content(String externalid, String... contentreferences)
 	{
-		return " <content>\n" + 
-		       "  <metadata>\n" + 
-		       "   <contentid>\n" + 
-		       "    <major>Department</major>\n" + 
-		       "    <externalid>"+externalid+"</externalid>\n" + 
-		       "   </contentid>\n" + 
-		       "  </metadata>\n" + 
+		return " <content>\n" +
+		       "  <metadata>\n" +
+		       "   <contentid>\n" +
+		       "    <major>Department</major>\n" +
+		       "    <externalid>"+externalid+"</externalid>\n" +
+		       "   </contentid>\n" +
+		       "  </metadata>\n" +
 		       contentlist("  ", contentreferences) +
 		       " </content>\n";
 	}
@@ -142,22 +147,28 @@ public class Resource
 		return " <input-template name=\"" + inputtemplate + "\">\n"+
 		       "  <policy>com.polopoly.cm.app.policy.SingleValuePolicy</policy>\n"+
 		       "  <editor>com.polopoly.cm.app.widget.OTextInputPolicyWidget</editor>\n"+
-		       "  <viewer>com.polopoly.cm.app.widget.OTextOutputPolicyWidget</viewer>\n"+    
+		       "  <viewer>com.polopoly.cm.app.widget.OTextOutputPolicyWidget</viewer>\n"+
 		       " </input-template>\n";
 	}
+
+	private static String outputTemplate(String outputTemplate) {
+	    return " <output-template name=\"" + outputTemplate + "\">\n"+
+	           " </output-template>";
+	}
+
 
 	public final static class Entry
 	{
 		public final String name;
 		public final String content;
-		
-		public Entry(String name, String content) 
+
+		public Entry(String name, String content)
 		{
 			this.name = name;
 			this.content = content;
 		}
 
-		public IResourceProxy proxy() 
+		public IResourceProxy proxy()
 		{
 			return new BaseProxy() {
 				@Override

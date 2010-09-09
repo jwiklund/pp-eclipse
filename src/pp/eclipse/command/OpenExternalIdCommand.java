@@ -7,7 +7,6 @@ import pp.eclipse.Activator;
 import pp.eclipse.open.DialogFactory;
 import pp.eclipse.open.MementoHandler;
 import pp.eclipse.open.Repository;
-import pp.eclipse.open.parse.Parser;
 import pp.eclipse.ui.SelectionDialog;
 
 public class OpenExternalIdCommand extends OpenCommandTemplate

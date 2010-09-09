@@ -8,7 +8,7 @@ public class Counter extends BaseProgressMonitor {
     public static Counter counter() {
         return new Counter();
     }
-    
+
     @Override
     public void worked(int work) {
         count = count + work;
@@ -17,5 +17,5 @@ public class Counter extends BaseProgressMonitor {
     public int count() {
         return count;
     }
-    
+
 }

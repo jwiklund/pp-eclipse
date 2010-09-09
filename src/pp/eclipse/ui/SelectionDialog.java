@@ -24,7 +24,7 @@ import pp.eclipse.open.Item;
 import pp.eclipse.open.MementoHandler;
 import pp.eclipse.open.Repository;
 
-public class SelectionDialog extends FilteredItemsSelectionDialog 
+public class SelectionDialog extends FilteredItemsSelectionDialog
 {
 	private final Repository repository;
 	private final MementoHandler memento;
@@ -37,7 +37,7 @@ public class SelectionDialog extends FilteredItemsSelectionDialog
         setSelectionHistory(new DefiningSelectionHistory());
         setListLabelProvider(new DefiningListLabelProvider());
     }
-    
+
 	public Item select() {
     	setInitialPattern("p.");
         open();
@@ -47,7 +47,7 @@ public class SelectionDialog extends FilteredItemsSelectionDialog
         }
         return (Item) result[0];
     }
-    
+
     protected class DefiningSelectionHistory extends SelectionHistory {
 
 		@Override
@@ -60,9 +60,9 @@ public class SelectionDialog extends FilteredItemsSelectionDialog
 		    memento.store(item, imemento);
 		}
     }
-    
-    protected class  DefiningListLabelProvider extends LabelProvider 
-    	implements ILabelProviderListener, IStyledLabelProvider 
+
+    protected class  DefiningListLabelProvider extends LabelProvider
+    	implements ILabelProviderListener, IStyledLabelProvider
     {
 
 		public StyledString getStyledText(Object element) {
@@ -81,11 +81,11 @@ public class SelectionDialog extends FilteredItemsSelectionDialog
 		public void labelProviderChanged(LabelProviderChangedEvent event) {
 		}
     }
-    
+
     @Override
     protected Control createExtendedContentArea(Composite arg0)
     {
-        // This method creates an extra content area located above the details. 
+        // This method creates an extra content area located above the details.
         // For now, we will just return null because we don't need any extra fields for this simple example:
         return null;
     }
@@ -94,13 +94,13 @@ public class SelectionDialog extends FilteredItemsSelectionDialog
     protected ItemsFilter createFilter()
     {
         return new ItemsFilter() {
-            
+
             @Override
             public boolean matchItem(Object arg0)
             {
                 return matches(((Item) arg0).externalid());
             }
-            
+
             @Override
             public boolean isConsistentItem(Object arg0)
             {
@@ -123,7 +123,7 @@ public class SelectionDialog extends FilteredItemsSelectionDialog
             }
         }
     }
-    
+
     private static final String DIALOG_SETTINGS = "FilteredContentXmlDialogSettings";
 
     @Override
@@ -132,7 +132,7 @@ public class SelectionDialog extends FilteredItemsSelectionDialog
         IDialogSettings settings = Activator.getDefault().getDialogSettings().getSection(DIALOG_SETTINGS);
         if (settings == null) {
             settings = Activator.getDefault().getDialogSettings().addNewSection(DIALOG_SETTINGS);
-        }       
+        }
         return settings;
     }
 

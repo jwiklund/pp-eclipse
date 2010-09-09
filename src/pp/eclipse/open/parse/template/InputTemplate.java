@@ -9,10 +9,10 @@ import javax.xml.namespace.QName;
 
 @XmlRootElement(name="input-template", namespace="http://www.polopoly.com/polopoly/cm/app/xml")
 public class InputTemplate {
-	/* JAXB is broken stupid (at least the version I tested this on) ... 
+	/* JAXB is broken stupid (at least the version I tested this on) ...
 	 * Adding an @XmlAttribute forced it to add a ns: name even when it uses the default namespace.
-	 * When parsing, it does not understand that the default namespace should be applied to non 
-	 * qualified attributes (and if you add a namespace it goes totally bonkers and gives me nothing). 
+	 * When parsing, it does not understand that the default namespace should be applied to non
+	 * qualified attributes (and if you add a namespace it goes totally bonkers and gives me nothing).
 	 */
 	@XmlAnyAttribute
 	public Map<QName, String> attributes = new HashMap<QName, String>();
@@ -22,7 +22,7 @@ public class InputTemplate {
     public InputTemplate(String externalid) {
     	attributes.put(externalidQName(), externalid);
 	}
-    
+
     public InputTemplate() {
     }
 

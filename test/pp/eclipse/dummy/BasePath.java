@@ -197,7 +197,7 @@ public class BasePath implements IPath {
 
         return null;
     }
-    
+
 
     public Object clone() {
         try {
