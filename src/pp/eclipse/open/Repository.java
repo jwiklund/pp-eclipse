@@ -60,7 +60,7 @@ public class Repository
 	}
 
     private Container read(IFile iResource) 
-        throws CoreException 
+
     {
         InputStream content = null;
         try {
@@ -93,7 +93,11 @@ public class Repository
                 Logger.getLogger("pp.eclipse.parse").fine("Parse of " + iResource.getName() + " failed: " + e.getMessage());
                 Logger.getLogger("pp.eclipse.parse").log(Level.FINER, "Parse failure", e);
             }
-        } finally {
+        } catch (CoreException e) {
+        	// TODO: If is out of sync, try to refresh
+			Logger.getLogger("pp.eclipse.read").fine("Read of " + iResource.getName() + " failed: " + e.getMessage());
+			Logger.getLogger("pp.eclipse.parse").log(Level.FINER, "Read failure", e);
+		} finally {
             if (content != null) {
                 try { 
                     content.close();
