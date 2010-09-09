@@ -1,23 +1,39 @@
 package pp.eclipse.open.parse.template;
 
-import javax.xml.bind.annotation.XmlAttribute;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.namespace.QName;
 
 @XmlRootElement(name="output-template", namespace="http://www.polopoly.com/polopoly/cm/app/xml")
 public class OutputTemplate {
-    @XmlAttribute(name="name", namespace="http://www.polopoly.com/polopoly/cm/app/xml")
-    public String externalid;
+    @XmlAnyAttribute
+    public Map<QName, String> attributes = new HashMap<QName, String>();
 
     public OutputTemplate(String externalid) {
-    	this.externalid = externalid;
+    	attributes.put(externalidQName(), externalid);
 	}
     
-    public OutputTemplate() {
+	public OutputTemplate() {
     }
+	
+	public String externalid() {
+    	String string = attributes.get(externalidQName());
+    	if (string == null) {
+    		string = attributes.get(new QName("name"));
+    	}
+		return string;
+    }
+	
+	private QName externalidQName() {
+		return new QName("http://www.polopoly.com/polopoly/cm/app/xml", "name");
+	}
     
     @Override
     public String toString() {
-        return "OutputTemplate [externalid=" + externalid + "]";
+        return "OutputTemplate [externalid=" + externalid() + "]";
     }
 
     @Override
@@ -25,7 +41,7 @@ public class OutputTemplate {
         final int prime = 31;
         int result = 1;
         result = prime * result
-                + ((externalid == null) ? 0 : externalid.hashCode());
+                + ((externalid() == null) ? 0 : externalid().hashCode());
         return result;
     }
 
@@ -38,10 +54,10 @@ public class OutputTemplate {
         if (getClass() != obj.getClass())
             return false;
         OutputTemplate other = (OutputTemplate) obj;
-        if (externalid == null) {
-            if (other.externalid != null)
+        if (externalid() == null) {
+            if (other.externalid() != null)
                 return false;
-        } else if (!externalid.equals(other.externalid))
+        } else if (!externalid().equals(other.externalid()))
             return false;
         return true;
     }

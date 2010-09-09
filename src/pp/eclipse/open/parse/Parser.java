@@ -69,21 +69,20 @@ public class Parser
 			    item = item.line(lineOfContentStart[0]);
 			    contents.add(item);
 			}
-			
 		}
 		return contents;
 	}
 
 	private Item convert(OutputTemplate element) {
-        if (element.externalid != null) {
-            return new Item(ItemType.OutputTemplate, element.externalid, null, -1);
+        if (element.externalid() != null) {
+            return new Item(ItemType.OutputTemplate, element.externalid(), null, -1);
         }
         return null;
     }
 
     private Item convert(InputTemplate element) {
-        if (element.externalid != null) {
-            return new Item(ItemType.InputTemplate, element.externalid, null, -1);
+        if (element.externalid() != null) {
+            return new Item(ItemType.InputTemplate, element.externalid(), null, -1);
         }
         return null;
     }
