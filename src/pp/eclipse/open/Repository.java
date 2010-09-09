@@ -24,55 +24,55 @@ import pp.eclipse.open.parse.Parser;
 
 public class Repository
 {
-	private final IContainer root;
-	private final Parser parser;
-	private final Map<IPath, Container> cache = new HashMap<IPath, Container>();
+    private final IContainer root;
+    private final Parser parser;
+    private final Map<IPath, Container> cache = new HashMap<IPath, Container>();
 
-	public Repository(IContainer root, Parser parser)
-	{
-		this.root = root;
-		this.parser = parser;
-	}
+    public Repository(IContainer root, Parser parser)
+    {
+        this.root = root;
+        this.parser = parser;
+    }
 
-	public List<Container> list(final IProgressMonitor monitor)
-		throws CoreException
-	{
-	    final List<Container> containers = new ArrayList<Container>();
-	    System.out.println("Started");
-	    //long started = System.currentTimeMillis();
-	    root.accept(new IResourceProxyVisitor() {
-	        public boolean visit(IResourceProxy proxy) throws CoreException {
-	            if (proxy.getName().matches(".*\\.xml")) {
-	            	Container container = cache.get(proxy.requestFullPath());
-	            	if (container != null && container.modified() != proxy.getModificationStamp()) {
-	            		container = null;
-	            	}
-	            	if (container == null) {
-	            		IResource resource = proxy.requestResource();
-	            		if (resource instanceof IFile) {
-	            			container = read((IFile) resource);
-	            		}
-	            		if (container != null) {
-	            			cache.put(container.path(), container);
-	            		}
-	            	}
-	            	if (container != null) {
-        				containers.add(container);
-        				monitor.worked(1);
-        			}
-	            }
-	            return true;
-	        }
+    public List<Container> list(final IProgressMonitor monitor)
+        throws CoreException
+    {
+        final List<Container> containers = new ArrayList<Container>();
+        System.out.println("Started");
+        //long started = System.currentTimeMillis();
+        root.accept(new IResourceProxyVisitor() {
+            public boolean visit(IResourceProxy proxy) throws CoreException {
+                if (proxy.getName().matches(".*\\.xml")) {
+                    Container container = cache.get(proxy.requestFullPath());
+                    if (container != null && container.modified() != proxy.getModificationStamp()) {
+                        container = null;
+                    }
+                    if (container == null) {
+                        IResource resource = proxy.requestResource();
+                        if (resource instanceof IFile) {
+                            container = read((IFile) resource);
+                        }
+                        if (container != null) {
+                            cache.put(container.path(), container);
+                        }
+                    }
+                    if (container != null) {
+                        containers.add(container);
+                        monitor.worked(1);
+                    }
+                }
+                return true;
+            }
 
-	    }, 0);
-	    //System.out.println("Done " + ((System.currentTimeMillis() - started) / 1000.0));
-	    //System.out.println("Read " + cache.size());
-	    return containers;
-	}
+        }, 0);
+        //System.out.println("Done " + ((System.currentTimeMillis() - started) / 1000.0));
+        //System.out.println("Read " + cache.size());
+        return containers;
+    }
 
-	public boolean validate(Item item) {
-		return true;
-	}
+    public boolean validate(Item item) {
+        return true;
+    }
 
     private Container read(IFile iResource)
 
@@ -101,10 +101,10 @@ public class Repository
                 Logger.getLogger("pp.eclipse.parse").log(Level.FINER, "Parse failure", e);
             }
         } catch (CoreException e) {
-        	// TODO: If is out of sync, try to refresh
-			Logger.getLogger("pp.eclipse.read").fine("Read of " + iResource.getName() + " failed: " + e.getMessage());
-			Logger.getLogger("pp.eclipse.parse").log(Level.FINER, "Read failure", e);
-		} finally {
+            // TODO: If is out of sync, try to refresh
+            Logger.getLogger("pp.eclipse.read").fine("Read of " + iResource.getName() + " failed: " + e.getMessage());
+            Logger.getLogger("pp.eclipse.parse").log(Level.FINER, "Read failure", e);
+        } finally {
             if (content != null) {
                 try {
                     content.close();
