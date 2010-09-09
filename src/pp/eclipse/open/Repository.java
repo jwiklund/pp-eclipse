@@ -63,7 +63,6 @@ public class Repository
                 }
                 return true;
             }
-
         }, 0);
         //System.out.println("Done " + ((System.currentTimeMillis() - started) / 1000.0));
         //System.out.println("Read " + cache.size());
@@ -75,7 +74,6 @@ public class Repository
     }
 
     private Container read(IFile iResource)
-
     {
         InputStream content = null;
         try {
