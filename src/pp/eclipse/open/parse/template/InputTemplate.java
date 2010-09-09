@@ -20,7 +20,7 @@ public class InputTemplate {
     //public String externalid;
 
     public InputTemplate(String externalid) {
-    	attributes.put(externalidQName(), externalid);
+        attributes.put(externalidQName(), externalid);
 	}
 
     public InputTemplate() {
@@ -30,16 +30,16 @@ public class InputTemplate {
      * to work on my machine...
      */
     public String externalid() {
-    	String string = attributes.get(externalidQName());
-    	if (string == null) {
-    		string = attributes.get(new QName("name"));
-    	}
-		return string;
+        String string = attributes.get(externalidQName());
+        if (string == null) {
+            string = attributes.get(new QName("name"));
+        }
+        return string;
     }
 
-	private QName externalidQName() {
-		return new QName("http://www.polopoly.com/polopoly/cm/app/xml", "name");
-	}
+    private QName externalidQName() {
+        return new QName("http://www.polopoly.com/polopoly/cm/app/xml", "name");
+    }
 
 	@Override
     public String toString() {

@@ -20,15 +20,15 @@ public class OutputTemplate {
     }
 
 	public String externalid() {
-    	String string = attributes.get(externalidQName());
-    	if (string == null) {
-    		string = attributes.get(new QName("name"));
-    	}
-		return string;
+	    String string = attributes.get(externalidQName());
+	    if (string == null) {
+	        string = attributes.get(new QName("name"));
+	    }
+	    return string;
     }
 
 	private QName externalidQName() {
-		return new QName("http://www.polopoly.com/polopoly/cm/app/xml", "name");
+	    return new QName("http://www.polopoly.com/polopoly/cm/app/xml", "name");
 	}
 
     @Override

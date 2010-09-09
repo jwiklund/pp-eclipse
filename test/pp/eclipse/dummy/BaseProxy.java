@@ -7,74 +7,51 @@ import org.eclipse.core.runtime.QualifiedName;
 
 class BaseProxy implements IResourceProxy {
 
+    public long getModificationStamp() {
+        return 0;
+    }
 
-	public long getModificationStamp() {
+    public boolean isAccessible() {
+        return false;
+    }
 
-		return 0;
-	}
+    public boolean isDerived() {
+        return false;
+    }
 
+    public boolean isLinked() {
+        return false;
+    }
 
-	public boolean isAccessible() {
+    public boolean isPhantom() {
+        return false;
+    }
 
-		return false;
-	}
+    public boolean isHidden() {
+        return false;
+    }
 
+    public boolean isTeamPrivateMember() {
+        return false;
+    }
 
-	public boolean isDerived() {
+    public String getName() {
+        return null;
+    }
 
-		return false;
-	}
+    public Object getSessionProperty(QualifiedName key) {
+        return null;
+    }
 
+    public int getType() {
+        return 0;
+    }
 
-	public boolean isLinked() {
+    public IPath requestFullPath() {
+        return null;
+    }
 
-		return false;
-	}
-
-
-	public boolean isPhantom() {
-
-		return false;
-	}
-
-
-	public boolean isHidden() {
-
-		return false;
-	}
-
-
-	public boolean isTeamPrivateMember() {
-
-		return false;
-	}
-
-
-	public String getName() {
-
-		return null;
-	}
-
-
-	public Object getSessionProperty(QualifiedName key) {
-
-		return null;
-	}
-
-
-	public int getType() {
-	    return requestResource().getType();
-	}
-
-
-	public IPath requestFullPath() {
-		return Path.path("/"+getName());
-	}
-
-
-	public IResource requestResource() {
-
-		return null;
-	}
-
+    public IResource requestResource() {
+        return null;
+    }
 }
