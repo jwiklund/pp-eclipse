@@ -38,10 +38,14 @@ public class Repository
         throws CoreException
     {
         final List<Container> containers = new ArrayList<Container>();
-        System.out.println("Started");
+        monitor.beginTask("Searching", cache.size() != 0 ? cache.size() : 1000);
+        //System.out.println("Started");
         //long started = System.currentTimeMillis();
         root.accept(new IResourceProxyVisitor() {
             public boolean visit(IResourceProxy proxy) throws CoreException {
+                if (monitor.isCanceled()) {
+                    return false;
+                }
                 if (proxy.getName().matches(".*\\.xml")) {
                     Container container = cache.get(proxy.requestFullPath());
                     if (container != null && container.modified() != proxy.getModificationStamp()) {
