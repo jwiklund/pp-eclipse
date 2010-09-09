@@ -6,6 +6,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import pp.eclipse.open.Repository;
+import pp.eclipse.open.parse.Parser;
+
 
 /**
  * The activator class controls the plug-in life cycle
@@ -35,6 +38,16 @@ public class Activator extends AbstractUIPlugin {
     public IWorkspaceRoot getWorkspaceRoot() {
         return ResourcesPlugin.getWorkspace().getRoot();
     }
+    
+    private Repository repository;
+	public Repository getRepository() {
+		synchronized (this) {
+			if (repository == null) {
+				repository = new Repository(getWorkspaceRoot(), new Parser());				
+			}
+			return repository;
+		}
+	}
 
     /*
      * (non-Javadoc)

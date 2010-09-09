@@ -6,7 +6,9 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,6 +27,7 @@ public class Repository
 {
 	private final IContainer root;
 	private final Parser[] parsers;
+	private final Map<IPath, Container> cache = new HashMap<IPath, Container>();
 
 	public Repository(IContainer root, Parser... parsers) 
 	{
@@ -39,14 +42,23 @@ public class Repository
 	    root.accept(new IResourceProxyVisitor() {
 	        public boolean visit(IResourceProxy proxy) throws CoreException {
 	            if (proxy.getName().matches(".*\\.xml")) {
-	                IResource resource = proxy.requestResource();
-	                if (resource instanceof IFile) {
-	                    Container read = read((IFile) resource);
-	                    if (read != null) {
-	                        containers.add(read);
-	                        monitor.worked(1);
-	                    }
-	                }
+	            	Container container = cache.get(proxy.requestFullPath());
+	            	if (container != null && container.modified() != proxy.getModificationStamp()) {
+	            		container = null;
+	            	}
+	            	if (container == null) {
+	            		IResource resource = proxy.requestResource();
+	            		if (resource instanceof IFile) {
+	            			container = read((IFile) resource);
+	            		}
+	            		if (container != null) {
+	            			cache.put(container.path(), container);
+	            		}
+	            	}
+	            	if (container != null) {
+        				containers.add(container);
+        				monitor.worked(1);
+        			}
 	            }
 	            return true;
 	        }
