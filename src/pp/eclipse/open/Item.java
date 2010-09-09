@@ -46,8 +46,6 @@ public class Item implements Comparable<Item> {
         return externalid + " " + type + " " + path + ":" + line;
     }
     
-
-    @Override
     public int compareTo(Item o) {
         if (!externalid.equals(o.externalid)) {
             return externalid.compareTo(o.externalid);

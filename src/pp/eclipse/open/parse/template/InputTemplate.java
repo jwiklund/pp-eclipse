@@ -8,7 +8,14 @@ public class InputTemplate {
     @XmlAttribute(name="name", namespace="http://www.polopoly.com/polopoly/cm/app/xml")
     public String externalid;
 
-    @Override
+    public InputTemplate(String externalid) {
+    	this.externalid = externalid;
+	}
+    
+    public InputTemplate() {
+    }
+
+	@Override
     public String toString() {
         return "InputTemplate [externalid=" + externalid + "]";
     }

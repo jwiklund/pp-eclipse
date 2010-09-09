@@ -65,7 +65,6 @@ public class SelectionDialog extends FilteredItemsSelectionDialog
     	implements ILabelProviderListener, IStyledLabelProvider 
     {
 
-		@Override
 		public StyledString getStyledText(Object element) {
 			if (element instanceof Item) {
 			    Item item = (Item) element;
@@ -79,7 +78,6 @@ public class SelectionDialog extends FilteredItemsSelectionDialog
 	        return new StyledString("?");
 		}
 
-		@Override
 		public void labelProviderChanged(LabelProviderChangedEvent event) {
 		}
     }
@@ -148,7 +146,6 @@ public class SelectionDialog extends FilteredItemsSelectionDialog
     protected Comparator<Object> getItemsComparator()
     {
         return new Comparator<Object>() {
-            @Override
             public int compare(Object o1, Object o2)
             {
                 return ((Item) o1).compareTo((Item) o2);

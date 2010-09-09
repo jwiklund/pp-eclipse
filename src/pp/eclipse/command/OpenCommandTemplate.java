@@ -27,7 +27,6 @@ public abstract class OpenCommandTemplate
 		this.dialogFactory = dialogFactory;
 	}
 
-	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();

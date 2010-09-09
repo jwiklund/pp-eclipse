@@ -24,7 +24,7 @@
 	  <key
             commandId="pp.eclipse.command.OpenExternalIdCommand"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M3+E">
+            sequence="M2+M3+P">
 	  </key>
       <key
             commandId="pp-eclipse.command.ImportContentXML"

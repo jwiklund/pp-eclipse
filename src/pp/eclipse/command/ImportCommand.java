@@ -36,7 +36,6 @@ public class ImportCommand extends AbstractHandler
 {
     final static String CONSOLE_NAME = "Import ContentXML";
 
-	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException 
 	{
 		Object activeEditor = HandlerUtil.getVariable(event, ISources.ACTIVE_EDITOR_NAME);

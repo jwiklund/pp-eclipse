@@ -37,7 +37,6 @@ public class Repository
 	{
 	    final List<Container> containers = new ArrayList<Container>();
 	    root.accept(new IResourceProxyVisitor() {
-	        @Override
 	        public boolean visit(IResourceProxy proxy) throws CoreException {
 	            if (proxy.getName().matches(".*\\.xml")) {
 	                IResource resource = proxy.requestResource();

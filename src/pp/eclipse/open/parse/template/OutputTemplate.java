@@ -8,6 +8,13 @@ public class OutputTemplate {
     @XmlAttribute(name="name", namespace="http://www.polopoly.com/polopoly/cm/app/xml")
     public String externalid;
 
+    public OutputTemplate(String externalid) {
+    	this.externalid = externalid;
+	}
+    
+    public OutputTemplate() {
+    }
+    
     @Override
     public String toString() {
         return "OutputTemplate [externalid=" + externalid + "]";

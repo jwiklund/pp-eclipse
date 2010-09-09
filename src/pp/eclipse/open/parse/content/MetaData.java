@@ -2,8 +2,6 @@ package pp.eclipse.open.parse.content;
 
 import javax.xml.bind.annotation.XmlElement;
 
-
-
 public class MetaData {
 	@XmlElement(name="contentid", namespace="http://www.polopoly.com/polopoly/cm/xmlio")
 	public ContentId contentid;

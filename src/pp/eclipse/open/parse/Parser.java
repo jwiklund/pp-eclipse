@@ -98,7 +98,6 @@ public class Parser
 	
 	private EventFilter createStartFilter() {
 		return new EventFilter() {
-			@Override
 			public boolean accept(XMLEvent event) {
 				return event.isStartElement();
 			}
@@ -108,7 +107,6 @@ public class Parser
 
 	private EventFilter createContentFilter(final int[] lineOfContentStart) {
 		return new EventFilter() {
-			@Override
 			public boolean accept(XMLEvent event) {
 				if (event.isStartElement() && supportedElement(event.asStartElement())) {
 					lineOfContentStart[0] = event.getLocation().getLineNumber();

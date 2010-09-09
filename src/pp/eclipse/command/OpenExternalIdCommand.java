@@ -13,7 +13,6 @@ public class OpenExternalIdCommand extends OpenCommandTemplate
 {
 	public OpenExternalIdCommand() {
 		super(new DialogFactory() {
-			@Override
 			public SelectionDialog createDialog(IContainer root) {
 				Shell shell = new Shell();
 				Repository repository = new Repository(root, new Parser());

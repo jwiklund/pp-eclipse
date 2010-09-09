@@ -21,25 +21,38 @@ import pp.eclipse.open.parse.Parser;
 import pp.eclipse.open.parse.content.Content;
 import pp.eclipse.open.parse.content.ContentId;
 import pp.eclipse.open.parse.content.MetaData;
+import pp.eclipse.open.parse.template.InputTemplate;
+import pp.eclipse.open.parse.template.OutputTemplate;
 
 
 public class ParseTest {
 	
-	private JAXBContext context;
+	private JAXBContext contentContext;
+	private JAXBContext templateContext;
 
 	@Before
 	public void setup()
 		throws Exception
 	{
-		context = JAXBContext.newInstance(Content.class);
+		contentContext = JAXBContext.newInstance(Content.class);
+		templateContext = JAXBContext.newInstance(InputTemplate.class, OutputTemplate.class);
 	}
 	@Test
-	public void verify_jaxb_context()
+	public void verify_jaxb_context_content()
 		throws Exception
 	{
 		StringWriter writer = new StringWriter();
-		context.createMarshaller().marshal(new Content(new MetaData(new ContentId("test"))), writer);
+		contentContext.createMarshaller().marshal(new Content(new MetaData(new ContentId("test"))), writer);
 		assertTrue(writer.toString(), writer.toString().matches(".*<content.*><metadata><contentid><externalid>test</externalid></contentid></metadata></content>"));
+	}
+	
+	@Test
+	public void verify_jaxb_context_input()
+		throws Exception
+	{
+		StringWriter writer = new StringWriter();
+		templateContext.createMarshaller().marshal(new InputTemplate("externalid"), writer);
+		assertTrue(writer.toString(), writer.toString().matches("<input-template .* name=\"externalid\".*></input-template>"));
 	}
 	
 	@Test
@@ -47,6 +60,14 @@ public class ParseTest {
 		throws Exception
 	{
 		List<Item> content = parse(Resource.content("", "test").content);
+		assertEquals("test", content.get(0).externalid());
+	}
+	
+	@Test
+	public void parse_input_template_should_return_id()
+		throws Exception
+	{
+		List<Item> content = parse(Resource.inputTemplate("", "test").content);
 		assertEquals("test", content.get(0).externalid());
 	}
 	
@@ -70,7 +91,7 @@ public class ParseTest {
 		throws XMLStreamException, JAXBException 
 	{
 		StringReader reader = new StringReader(data);
-		List<Item> content = new Parser(context.createUnmarshaller()).parse(new BufferedReader(reader));
+		List<Item> content = new Parser(contentContext.createUnmarshaller()).parse(new BufferedReader(reader));
 		return content;
 	}
 }
