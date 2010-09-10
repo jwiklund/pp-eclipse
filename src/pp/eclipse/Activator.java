@@ -7,6 +7,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import pp.eclipse.open.Repository;
+import pp.eclipse.open.parse.JAXBParser;
 import pp.eclipse.open.parse.StreamParser;
 
 
@@ -43,7 +44,7 @@ public class Activator extends AbstractUIPlugin {
 	public Repository getRepository() {
 		synchronized (this) {
 			if (repository == null) {
-				repository = new Repository(getWorkspaceRoot(), new StreamParser());
+				repository = new Repository(getWorkspaceRoot(), new JAXBParser());
 			}
 			return repository;
 		}

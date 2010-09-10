@@ -40,6 +40,7 @@ public class Repository
         final List<Container> containers = new ArrayList<Container>();
         monitor.beginTask("Searching", cache.size() != 0 ? cache.size() : 1000);
         //System.out.println("Started");
+        //final long[] counter = new long[1];
         //long started = System.currentTimeMillis();
         root.accept(new IResourceProxyVisitor() {
             public boolean visit(IResourceProxy proxy) throws CoreException {
@@ -47,6 +48,7 @@ public class Repository
                     return false;
                 }
                 if (proxy.getName().matches(".*\\.xml")) {
+                    //counter[0] = counter[0] + 1;
                     Container container = cache.get(proxy.requestFullPath());
                     if (container != null && container.modified() != proxy.getModificationStamp()) {
                         container = null;
@@ -69,6 +71,7 @@ public class Repository
             }
         }, 0);
         //System.out.println("Done " + ((System.currentTimeMillis() - started) / 1000.0));
+        //System.out.println("XML files " + counter[0]);
         //System.out.println("Read " + cache.size());
         return containers;
     }
