@@ -33,5 +33,19 @@
             sequence="M2+M3+X I">
       </key>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="pp.eclipse.Preferences">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="pp.eclipse.ui.PreferencesPage"
+            id="pp-eclipse.preferences"
+            name="pp-eclipse">
+      </page>
+   </extension>
 
 </plugin>

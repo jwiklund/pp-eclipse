@@ -49,7 +49,7 @@ public class Activator extends AbstractUIPlugin {
 			return repository;
 		}
 	}
-
+	
     /*
      * (non-Javadoc)
      *
