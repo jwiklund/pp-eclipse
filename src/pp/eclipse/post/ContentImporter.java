@@ -6,13 +6,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URL;
 
 public class ContentImporter {
 
-	public ImportResult importContent(Content content, Host host)
+    public ImportResult importContent(Content content, URL url)
 		throws MalformedURLException, IOException
 	{
-		HttpURLConnection connection = (HttpURLConnection) host.createURL().openConnection();
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setDoInput(true);
 		connection.setDoOutput(true);
 		connection.setRequestMethod("PUT");

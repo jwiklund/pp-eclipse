@@ -1,4 +1,4 @@
-package pp.eclipse.dummy;
+package pp.eclipse.open.dummy;
 
 public class Counter extends BaseProgressMonitor {
 

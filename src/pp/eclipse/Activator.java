@@ -8,7 +8,6 @@ import org.osgi.framework.BundleContext;
 
 import pp.eclipse.open.Repository;
 import pp.eclipse.open.parse.JAXBParser;
-import pp.eclipse.open.parse.StreamParser;
 
 
 /**
@@ -41,13 +40,17 @@ public class Activator extends AbstractUIPlugin {
     }
 
     private Repository repository;
-	public Repository getRepository() {
+	public Repository respository() {
 		synchronized (this) {
 			if (repository == null) {
-				repository = new Repository(getWorkspaceRoot(), new JAXBParser());
+				repository = new Repository(getWorkspaceRoot(), preferences(), new JAXBParser());
 			}
 			return repository;
 		}
+	}
+	
+	public Preferences preferences() {
+	    return new Preferences(getPreferenceStore());
 	}
 	
     /*

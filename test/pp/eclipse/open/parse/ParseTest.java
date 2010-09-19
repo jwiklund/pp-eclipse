@@ -1,4 +1,4 @@
-package pp.eclipse.parse;
+package pp.eclipse.open.parse;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,9 +11,8 @@ import javax.xml.stream.XMLStreamException;
 
 import org.junit.Test;
 
-import pp.eclipse.dummy.Resource;
 import pp.eclipse.open.Item;
-import pp.eclipse.open.parse.StreamParser;
+import pp.eclipse.open.dummy.Resource;
 
 public class ParseTest {
 	@Test

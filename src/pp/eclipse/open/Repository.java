@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -20,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import pp.eclipse.Preferences;
 import pp.eclipse.open.parse.Parser;
 
 public class Repository
@@ -27,10 +29,12 @@ public class Repository
     private final IContainer root;
     private final Parser parser;
     private final Map<IPath, Container> cache = new HashMap<IPath, Container>();
+    private final Preferences preferences;
 
-    public Repository(IContainer root, Parser parser)
+    public Repository(IContainer root, Preferences preferences, Parser parser)
     {
         this.root = root;
+        this.preferences = preferences;
         this.parser = parser;
     }
 
@@ -42,14 +46,24 @@ public class Repository
         //System.out.println("Started");
         //final long[] counter = new long[1];
         //long started = System.currentTimeMillis();
+        final Pattern skipPattern = preferences.skipPattern();
         root.accept(new IResourceProxyVisitor() {
             public boolean visit(IResourceProxy proxy) throws CoreException {
                 if (monitor.isCanceled()) {
                     return false;
                 }
+                if (skipPattern != null && proxy.getType() == IResource.FOLDER) {
+                    if (skipPattern.matcher(proxy.requestFullPath().toPortableString()).matches()) {
+                        return false;
+                    }
+                }
                 if (proxy.getName().matches(".*\\.xml")) {
                     //counter[0] = counter[0] + 1;
-                    Container container = cache.get(proxy.requestFullPath());
+                    IPath fullPath = proxy.requestFullPath();
+                    if (skipPattern != null && skipPattern.matcher(fullPath.toPortableString()).matches()) {
+                        return true;
+                    }
+                    Container container = cache.get(fullPath);
                     if (container != null && container.modified() != proxy.getModificationStamp()) {
                         container = null;
                     }

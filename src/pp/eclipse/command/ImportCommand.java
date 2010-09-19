@@ -6,6 +6,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -27,9 +28,9 @@ import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import pp.eclipse.Activator;
 import pp.eclipse.post.Content;
 import pp.eclipse.post.ContentImporter;
-import pp.eclipse.post.Host;
 import pp.eclipse.post.ImportResult;
 
 public class ImportCommand extends AbstractHandler
@@ -57,7 +58,7 @@ public class ImportCommand extends AbstractHandler
 	private void importContent(IFile file) throws PartInitException, UnsupportedEncodingException
 	{
 		MessageConsole console = findConsole(CONSOLE_NAME);
-		Host host = new Host("http://localhost:8080/polopoly/import", "sysadmin", "sysadmin");
+		URL url = Activator.getDefault().preferences().importUrl();
         InputStream contents = null;
         try {
             contents = file.getContents();
@@ -81,8 +82,8 @@ public class ImportCommand extends AbstractHandler
 		show(console);
 		try {
 		    pw.println("Importing " + file.getFullPath().toString());
-		    pw.println("To " + host.url);
-            ImportResult result = new ContentImporter().importContent(new Content(contents, charset), host);
+		    pw.println("To " + url);
+            ImportResult result = new ContentImporter().importContent(new Content(contents, charset), url);
             pw.println("Result");
             pw.println(handleResult(result));
         } catch (MalformedURLException e) {

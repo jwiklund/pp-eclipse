@@ -1,4 +1,4 @@
-package pp.eclipse.dummy;
+package pp.eclipse.open.dummy;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;

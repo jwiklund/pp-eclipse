@@ -1,4 +1,4 @@
-package pp.eclipse.dummy;
+package pp.eclipse.open.dummy;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

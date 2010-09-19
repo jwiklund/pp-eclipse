@@ -15,7 +15,7 @@ public class OpenExternalIdCommand extends OpenCommandTemplate
 		super(new DialogFactory() {
 			public SelectionDialog createDialog(IContainer root) {
 				Shell shell = new Shell();
-				Repository repository = Activator.getDefault().getRepository();
+				Repository repository = Activator.getDefault().respository();
 				SelectionDialog dialog = new SelectionDialog(shell, repository, new MementoHandler(root));
 				dialog.setTitle("Filtered ExternalId Dialog");
 				return dialog;

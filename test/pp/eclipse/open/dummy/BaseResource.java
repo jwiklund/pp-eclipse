@@ -1,4 +1,4 @@
-package pp.eclipse.dummy;
+package pp.eclipse.open.dummy;
 
 import java.net.URI;
 import java.util.Map;
