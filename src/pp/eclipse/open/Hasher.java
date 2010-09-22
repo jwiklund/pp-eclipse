@@ -1,5 +1,6 @@
 package pp.eclipse.open;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -26,6 +27,11 @@ public class Hasher {
 			digester.update(arr, 0, length);
 		}
 		return toString(digester.digest());
+	}
+	
+	public String hash(String content) throws IOException
+	{
+		return hash(new ByteArrayInputStream(content.getBytes("UTF8")));
 	}
 
 	static String toString(byte[] digest) {
