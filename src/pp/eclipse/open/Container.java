@@ -8,12 +8,20 @@ import pp.eclipse.open.Item;
 
 public class Container {
     public final IPath path;
+    public final String hash;
     public final long modified;
     public final List<Item> items;
 
     public Container(IPath path, long modified, List<Item> items) {
-        super();
         this.path = path;
+        this.hash = null;
+        this.modified = modified;
+        this.items = items;
+    }
+    
+    public Container(IPath path, long modified, String hash, List<Item> items) {
+        this.path = path;
+        this.hash = hash;
         this.modified = modified;
         this.items = items;
     }
@@ -29,6 +37,14 @@ public class Container {
     public List<Item> items() {
         return items;
     }
+    
+    public Container withHash(String newHash) {
+    	return new Container(path, modified, newHash, items);
+    }
+    
+	public Container withModification(long newModification) {
+		return new Container(path, newModification, hash, items);
+	}
 
     @Override
     public String toString() {

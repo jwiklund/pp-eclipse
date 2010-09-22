@@ -1,24 +1,13 @@
 package pp.eclipse.open;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
+import java.util.concurrent.Callable;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxy;
-import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import pp.eclipse.Preferences;
@@ -28,7 +17,9 @@ public class Repository
 {
     private final IContainer root;
     private final Parser parser;
-    private final Map<IPath, Container> cache = new HashMap<IPath, Container>();
+    private final Map<String, Container> cache = new HashMap<String, Container>();
+    private final Map<String, List<Item>> persistent = new HashMap<String, List<Item>>();
+    
     private final Preferences preferences;
 
     public Repository(IContainer root, Preferences preferences, Parser parser)
@@ -43,95 +34,25 @@ public class Repository
     {
         final List<Container> containers = new ArrayList<Container>();
         monitor.beginTask("Searching", cache.size() != 0 ? cache.size() : 1000);
-        //System.out.println("Started");
-        //final long[] counter = new long[1];
-        //long started = System.currentTimeMillis();
-        final Pattern skipPattern = preferences.skipPattern();
-        root.accept(new IResourceProxyVisitor() {
-            public boolean visit(IResourceProxy proxy) throws CoreException {
-                if (monitor.isCanceled()) {
-                    return false;
-                }
-                if (skipPattern != null && proxy.getType() == IResource.FOLDER) {
-                    if (skipPattern.matcher(proxy.requestFullPath().toPortableString()).matches()) {
-                        return false;
-                    }
-                }
-                if (proxy.getName().matches(".*\\.xml")) {
-                    //counter[0] = counter[0] + 1;
-                    IPath fullPath = proxy.requestFullPath();
-                    if (skipPattern != null && skipPattern.matcher(fullPath.toPortableString()).matches()) {
-                        return true;
-                    }
-                    Container container = cache.get(fullPath);
-                    if (container != null && container.modified() != proxy.getModificationStamp()) {
-                        container = null;
-                    }
-                    if (container == null) {
-                        IResource resource = proxy.requestResource();
-                        if (resource instanceof IFile) {
-                            container = read((IFile) resource);
-                        }
-                        if (container != null) {
-                            cache.put(container.path(), container);
-                        }
-                    }
-                    if (container != null) {
-                        containers.add(container);
-                        monitor.worked(1);
-                    }
-                }
-                return true;
-            }
-        }, 0);
-        //System.out.println("Done " + ((System.currentTimeMillis() - started) / 1000.0));
-        //System.out.println("XML files " + counter[0]);
-        //System.out.println("Read " + cache.size());
+        System.out.println("Started");
+        long started = System.currentTimeMillis();
+        RepositoryVisitor visitor = new RepositoryVisitor(preferences.skipPattern(), cancelled(monitor), containers, parser, cache, persistent);
+		root.accept(visitor, 0);
+        System.out.println("Done " + ((System.currentTimeMillis() - started) / 1000.0));
         return containers;
     }
 
-    public boolean validate(Item item) {
+    private static Callable<Boolean> cancelled(final IProgressMonitor monitor) {
+		return new Callable<Boolean>() {
+			public Boolean call() throws Exception {
+				return monitor.isCanceled();
+			}
+		};
+	}
+
+	public boolean validate(Item item) {
         return true;
     }
-
-    private Container read(IFile iResource)
-    {
-        InputStream content = null;
-        try {
-            content = iResource.getContents();
-            String charset = iResource.getCharset();
-            if (charset == null) {
-                charset = "UTF8";
-            }
-            try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(content, charset));
-                List<Item> parsed = parser.parse(reader);
-                List<Item> updated = new ArrayList<Item>();
-                IPath fullPath = iResource.getFullPath();
-                for (Item parse : parsed) {
-                    updated.add(parse.path(fullPath));
-                }
-                return new Container(fullPath, iResource.getModificationStamp(), updated);
-            } catch (UnsupportedEncodingException e) {
-                Logger.getLogger("pp.eclipse.parse").fine("Parse of " + iResource.getName() + " failed: " + e.getMessage());
-                Logger.getLogger("pp.eclipse.parse").log(Level.FINER, "Parse failure", e);
-            } catch (Exception e) {
-                Logger.getLogger("pp.eclipse.parse").fine("Parse of " + iResource.getName() + " failed: " + e.getMessage());
-                Logger.getLogger("pp.eclipse.parse").log(Level.FINER, "Parse failure", e);
-            }
-        } catch (CoreException e) {
-            // TODO: If is out of sync, try to refresh
-            Logger.getLogger("pp.eclipse.read").fine("Read of " + iResource.getName() + " failed: " + e.getMessage());
-            Logger.getLogger("pp.eclipse.parse").log(Level.FINER, "Read failure", e);
-        } finally {
-            if (content != null) {
-                try {
-                    content.close();
-                } catch (Exception e) {
-                    // Skip
-                }
-            }
-        }
-        return null;
-    }
+    
+    
 }
