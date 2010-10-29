@@ -18,7 +18,7 @@ import org.osgi.framework.BundleContext;
 import pp.eclipse.open.DBMap;
 import pp.eclipse.open.Item;
 import pp.eclipse.open.Repository;
-import pp.eclipse.open.parse.JAXBParser;
+import pp.eclipse.open.parse.StreamParser;
 
 
 /**
@@ -64,7 +64,7 @@ public class Activator extends AbstractUIPlugin {
 					Logger.getLogger(Activator.class.getName()).log(Level.WARNING, "Can not persist data", e);
 					map = new HashMap<String, List<Item>>();
 				}
-				repository = new Repository(getWorkspaceRoot(), preferences(), new JAXBParser(), map);
+				repository = new Repository(getWorkspaceRoot(), preferences(), new StreamParser(), map);
 			}
 			return repository;
 		}

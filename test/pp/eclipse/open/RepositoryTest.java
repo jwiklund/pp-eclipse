@@ -1,4 +1,4 @@
-package pp.eclipse.open.domain;
+package pp.eclipse.open;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
@@ -20,7 +20,7 @@ import pp.eclipse.open.dummy.Path;
 import pp.eclipse.open.dummy.Resource;
 import pp.eclipse.open.parse.StreamParser;
 
-public class BasicRepositoryTest {
+public class RepositoryTest {
 
 	@Test
 	public void testExtractExternalId()

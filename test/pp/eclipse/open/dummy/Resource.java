@@ -174,6 +174,10 @@ public class Resource
                     return name;
                 }
                 @Override
+                public IPath requestFullPath() {
+                	return new org.eclipse.core.runtime.Path("/" + name);
+                }
+                @Override
                 public IResource requestResource() {
                     return new BaseFile() {
                         @Override

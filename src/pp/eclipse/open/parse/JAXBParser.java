@@ -29,6 +29,7 @@ public class JAXBParser implements Parser
 
 	public JAXBParser(Unmarshaller unmarshaller) {
 		this.unmarshaller = unmarshaller;
+		xmlif.setXMLResolver(new BogusResolver());
 	}
 
 	public JAXBParser() {

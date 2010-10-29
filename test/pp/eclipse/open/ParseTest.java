@@ -1,4 +1,4 @@
-package pp.eclipse.open.parse;
+package pp.eclipse.open;
 
 import static org.junit.Assert.assertEquals;
 
@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import pp.eclipse.open.Item;
 import pp.eclipse.open.dummy.Resource;
+import pp.eclipse.open.parse.StreamParser;
 
 public class ParseTest {
 	@Test

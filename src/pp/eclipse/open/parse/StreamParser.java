@@ -19,6 +19,10 @@ public class StreamParser implements Parser
 {
     private final XMLInputFactory xmlif = XMLInputFactory.newInstance();
 
+    public StreamParser() {
+        xmlif.setXMLResolver(new BogusResolver());
+	}
+
     public List<Item> parse(BufferedReader reader)
         throws XMLStreamException
     {

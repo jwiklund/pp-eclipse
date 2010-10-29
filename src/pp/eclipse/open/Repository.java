@@ -36,11 +36,11 @@ public class Repository
     {
         final List<Container> containers = new ArrayList<Container>();
         monitor.beginTask("Searching", cache.size() != 0 ? cache.size() : 1000);
-        //System.out.println("Started");
-        //long started = System.currentTimeMillis();
+        System.out.println("Started");
+        long started = System.currentTimeMillis();
         RepositoryVisitor visitor = new RepositoryVisitor(preferences.skipPattern(), cancelled(monitor), containers, parser, cache, persistent);
 		root.accept(visitor, 0);
-        //System.out.println("Done " + ((System.currentTimeMillis() - started) / 1000.0));
+        System.out.println("Done " + ((System.currentTimeMillis() - started) / 1000.0));
         return containers;
     }
 
