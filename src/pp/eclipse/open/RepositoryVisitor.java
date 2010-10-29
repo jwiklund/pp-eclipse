@@ -25,36 +25,35 @@ import pp.eclipse.open.parse.Parser;
 
 public class RepositoryVisitor implements IResourceProxyVisitor 
 {
-	private final Pattern ignore;
-	private final Callable<Boolean> cancelled;
-	private final List<Container> containers;
-	private final Parser parser;
-	private final Map<String, Container> pathCache;
-	private final Map<String, List<Item>> hashCache;
-	
-	private final Hasher hasher = new Hasher();
+    private final Pattern ignore;
+    private final Callable<Boolean> cancelled;
+    private final List<Container> containers;
+    private final Parser parser;
+    private final Map<String, Container> pathCache;
+    private final Map<String, List<Item>> hashCache;
+    private final Hasher hasher = new Hasher();
 
-	public RepositoryVisitor(Pattern ignore, Callable<Boolean> cancelled, List<Container> containers,
-							 Parser parser,
-							 Map<String, Container> pathCache,
-							 Map<String, List<Item>> hashCache)
-	{
-		this.ignore = ignore;
-		this.cancelled = cancelled;
-		this.containers = containers;
-		this.parser = parser;
-		this.pathCache = pathCache;
-		this.hashCache = hashCache;
-	}
+    public RepositoryVisitor(Pattern ignore, Callable<Boolean> cancelled, List<Container> containers,
+                             Parser parser,
+                             Map<String, Container> pathCache,
+                             Map<String, List<Item>> hashCache)
+    {
+        this.ignore = ignore;
+        this.cancelled = cancelled;
+        this.containers = containers;
+        this.parser = parser;
+        this.pathCache = pathCache;
+        this.hashCache = hashCache;
+    }
 
-	public boolean visit(IResourceProxy proxy) {
-		try {
-			if (cancelled.call()) {
-				return false;
-			}
-		} catch (Exception e) {
-			return false;
-		}
+    public boolean visit(IResourceProxy proxy) {
+        try {
+            if (cancelled.call()) {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
         if (proxy.getType() == IResource.FOLDER) {
             if (ignore != null && isIgnored(proxy.requestFullPath().toPortableString())) {
                 return false;
@@ -62,80 +61,92 @@ public class RepositoryVisitor implements IResourceProxyVisitor
             return true;
         }
         if (!proxy.getName().endsWith(".xml")) {
-        	return true;
+            return true;
         }
         IPath fullPath = proxy.requestFullPath();
         String portablePath = fullPath.toPortableString();
         if (isIgnored(portablePath)) {
-        	return true;
+            return true;
         }
         Container container = pathCache.get(portablePath);
         if (container != null && container.modified == proxy.getModificationStamp()) {
             // Resource not updated
-        	containers.add(container);
-        	return true;
+            containers.add(container);
+            return true;
         }
         IResource resource = proxy.requestResource();
         if (!(resource instanceof IFile)) {
-        	return true;
+            return true;
         }
         IFile file = (IFile) resource;
         String hash = readHash(file);
-        if (container != null && hash.equals(container.hash)) {
-        	// Resource updated, but hash the same
-        	container = container.withModification(proxy.getModificationStamp());
-        	pathCache.put(portablePath, container);
-        	containers.add(container);
-        	return true;
+        if (container != null && hash != null && hash.equals(container.hash)) {
+            // Resource updated, but hash the same
+            container = container.withModification(proxy.getModificationStamp());
+            pathCache.put(portablePath, container);
+            containers.add(container);
+            return true;
         }
         List<Item> items = hashCache.get(hash);
         if (items != null) {
-        	// Resource matched by hash (moved or restored from vcs)
-        	container = new Container(fullPath, proxy.getModificationStamp(), hash, items);
-        	pathCache.put(portablePath, container);
-        	if (items.size() > 0) {
-        		containers.add(container);
-        	}
-        	return true;
+            // Resource matched by hash (moved or restored from vcs)
+            container = new Container(fullPath, proxy.getModificationStamp(), hash, items);
+            pathCache.put(portablePath, container);
+            if (items.size() > 0) {
+                containers.add(container);
+            }
+            return true;
         }
         items = readItems(file);
-        container = new Container(fullPath, proxy.getModificationStamp(), hash, items);
-        hashCache.put(hash, items);
+        container = new Container(fullPath, proxy.getModificationStamp(), hash == null ? "unavailable" : hash, items);
+        if (hash != null) {
+            hashCache.put(hash, items);
+        }
         pathCache.put(portablePath, container);
         if (items.size() > 0) {
-        	containers.add(container);
+            containers.add(container);
         }
         return true;
-	}
+    }
 
-	private boolean isIgnored(String portablePath) 
-	{
-		return ignore != null && ignore.matcher(portablePath).matches();
-	}
-	
-	private String readHash(IFile iResource)
+    private boolean isIgnored(String portablePath) 
     {
-    	InputStream content = null;
-    	try {
-    		content = iResource.getContents();
-    		return hasher.hash(content);
-    	} catch (CoreException e) {
-    		// TODO: If is out of sync, try to refresh
+        return ignore != null && ignore.matcher(portablePath).matches();
+    }
+
+    private String readHash(IFile iResource)
+    {
+        InputStream content = null;
+        try {
+            try {
+                content = iResource.getContents();
+                return hasher.hash(content);
+            } catch (CoreException e) {
+                if (e.getMessage() != null && e.getMessage().startsWith("Resource is out of sync with the file system:")) {
+                    try {
+                        iResource.refreshLocal(1, null);
+                        content = iResource.getContents();
+                        return hasher.hash(content);
+                    } catch (CoreException e1) {
+                        // Ignore Report original Error
+                    }
+                }
+                Logger.getLogger("pp.eclipse.read").fine("Read of " + iResource.getName() + " failed: " + e.getMessage());
+                Logger.getLogger("pp.eclipse.hash").log(Level.FINER, "Hash failure", e);
+            }
+        } catch (IOException e) {
             Logger.getLogger("pp.eclipse.read").fine("Read of " + iResource.getName() + " failed: " + e.getMessage());
             Logger.getLogger("pp.eclipse.hash").log(Level.FINER, "Hash failure", e);
-		} catch (IOException e) {
-			Logger.getLogger("pp.eclipse.read").fine("Read of " + iResource.getName() + " failed: " + e.getMessage());
-            Logger.getLogger("pp.eclipse.hash").log(Level.FINER, "Hash failure", e);
-		} finally {
-    		if (content != null) {
-				try {
-					content.close();
-				} catch (IOException e) {
-					// Ignore
-				}
-    		}
-    	}
-		return "notavailable";
+        } finally {
+            if (content != null) {
+                try {
+                    content.close();
+                } catch (IOException e) {
+                    // Ignore
+                }
+            }
+        }
+        return null;
     }
 
     private List<Item> readItems(IFile iResource)
@@ -165,7 +176,6 @@ public class RepositoryVisitor implements IResourceProxyVisitor
                 Logger.getLogger("pp.eclipse.parse").log(Level.FINER, "Parse failure", e);
             }
         } catch (CoreException e) {
-            // TODO: If is out of sync, try to refresh
             Logger.getLogger("pp.eclipse.read").fine("Read of " + iResource.getName() + " failed: " + e.getMessage());
             Logger.getLogger("pp.eclipse.parse").log(Level.FINER, "Read failure", e);
         } finally {
