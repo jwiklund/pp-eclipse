@@ -64,9 +64,9 @@ public class Resource
         return new Entry(filename, "");
     }
 
-    public static Entry inputTemplate(String filename, String inputTemplate)
+    public static Entry inputTemplate(String filename, String inputTemplate, ClassReference... references)
     {
-        return new Entry(filename, templateDefinition(inputTemplate(inputTemplate)));
+        return new Entry(filename, templateDefinition(inputTemplate(inputTemplate, references)));
     }
 
     public static Entry outputTemplate(String filename, String outputTemplate)
@@ -82,6 +82,26 @@ public class Resource
     public static Entry content(String filename, String externalid, String... contentreferences)
     {
         return new Entry(filename, batch(content(externalid, contentreferences)));
+    }
+
+    public static ClassReference policy(String policy) {
+        return new ClassReference("policy", null, policy);
+    }
+
+    public static ClassReference viewer(String context, String widget) {
+        return new ClassReference("viewer", context, widget);
+    }
+
+    public static ClassReference viewer(String widget) {
+        return new ClassReference("viewer", null, widget);
+    }
+
+    public static ClassReference editor(String context, String widget) {
+        return new ClassReference("editor", context, widget);
+    }
+
+    public static ClassReference editor(String widget) {
+        return new ClassReference("editor", null, widget);
     }
 
     private static String batch(String... contents)
@@ -141,12 +161,20 @@ public class Resource
         return sb.toString();
     }
 
-    private static String inputTemplate(String inputtemplate) {
-        return " <input-template name=\"" + inputtemplate + "\">\n"+
-               "  <policy>com.polopoly.cm.app.policy.SingleValuePolicy</policy>\n"+
-               "  <editor>com.polopoly.cm.app.widget.OTextInputPolicyWidget</editor>\n"+
-               "  <viewer>com.polopoly.cm.app.widget.OTextOutputPolicyWidget</viewer>\n"+
-               " </input-template>\n";
+    private static String inputTemplate(String inputtemplate, ClassReference... references) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" <input-template name=\"").append(inputtemplate).append("\">\n");
+        if (references.length == 0) {
+            sb.append("  <policy>com.polopoly.cm.app.policy.SingleValuePolicy</policy>\n");
+            sb.append("  <editor>com.polopoly.cm.app.widget.OTextInputPolicyWidget</editor>\n");
+            sb.append("  <viewer>com.polopoly.cm.app.widget.OTextOutputPolicyWidget</viewer>\n");
+        } else {
+            for (ClassReference ref : references) {
+                sb.append(ref.toString());
+            }
+        }
+        sb.append(" </input-template>\n");
+        return sb.toString();
     }
 
     private static String outputTemplate(String outputTemplate) {
@@ -154,6 +182,20 @@ public class Resource
                " </output-template>";
     }
 
+    public final static class ClassReference {
+        public final String type;
+        public final String context;
+        public final String reference;
+        public ClassReference(String type, String context, String reference) {
+            super();
+            this.type = type;
+            this.context = context;
+            this.reference = reference;
+        }
+        public String toString() {
+            return "<" + type + (context == null ? "" : " contextName=\"" + context + "\"") + ">" + reference + "</" + type + ">";
+        }
+    }
 
     public final static class Entry
     {

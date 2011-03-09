@@ -3,7 +3,11 @@ package pp.eclipse.open.parse;
 import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -23,12 +27,13 @@ public class StreamParser implements Parser
         xmlif.setXMLResolver(new BogusResolver());
 	}
 
-    public List<Item> parse(BufferedReader reader)
+    public ParserResult parse(BufferedReader reader)
         throws XMLStreamException
     {
         XMLEventReader source = xmlif.createXMLEventReader(reader);
         List<Item> result = new ArrayList<Item>();
-        StateHandler handler = new StateHandler(result);
+        Map<String, Set<String>> itClasses = new HashMap<String, Set<String>>();
+        StateHandler handler = new StateHandler(result, itClasses);
         List<QName> path = new ArrayList<QName>();
         for (; source.hasNext(); ) {
             XMLEvent nextEvent = source.nextEvent();
@@ -52,11 +57,11 @@ public class StreamParser implements Parser
                 }
             }
         }
-        return result;
+        return new ParserResult(result, itClasses);
     }
 
     private enum State {
-        Initial, Batch, Templates
+        Initial, Batch, Templates, InputTemplate
     }
 
     private static class Elements {
@@ -72,15 +77,22 @@ public class StreamParser implements Parser
         public final static QName InputTemplate = new QName(nsTempl, "input-template");
         public final static QName OutputTemplate = new QName(nsTempl, "output-template");
         public final static QName NameAttribute = new QName("name");
+        public final static Set<QName> InputTemplateClasses = new HashSet<QName>(Arrays.asList(
+                new QName(nsTempl, "policy"),
+                new QName(nsTempl, "editor"),
+                new QName(nsTempl, "viewer")));
     }
 
     private static class StateHandler
     {
         State state = State.Initial;
         List<Item> result;
+        private Item currentInputTemplate;
+        Map<String, Set<String>> itClasses;
 
-        public StateHandler(List<Item> result) {
+        public StateHandler(List<Item> result, Map<String, Set<String>> itClasses) {
             this.result = result;
+            this.itClasses = itClasses;
         }
 
         public boolean handle(List<QName> path, XMLEvent event) {
@@ -109,13 +121,29 @@ public class StreamParser implements Parser
                     if (path.get(1).equals(Elements.InputTemplate)) {
                         String externalid = getAttribute(event);
                         if (externalid != null) {
-                            result.add(new Item(ItemType.InputTemplate, externalid, null, event.getLocation().getLineNumber()));
+                            currentInputTemplate = new Item(ItemType.InputTemplate, externalid, null, event.getLocation().getLineNumber());
+                            state = State.InputTemplate;
+                            result.add(currentInputTemplate);
                         }
                     } else if (path.get(1).equals(Elements.OutputTemplate)) {
                         String externalid = getAttribute(event);
                         if (externalid != null) {
                             result.add(new Item(ItemType.OutputTemplate, externalid, null, event.getLocation().getLineNumber()));
                         }
+                    }
+                }
+                break;
+            case InputTemplate:
+                if (event.isEndElement() && path.size() == 2) {
+                    state = State.Templates;
+                    currentInputTemplate = null;
+                } else if (path.size() == 3 && Elements.InputTemplateClasses.contains(path.get(2)) && event.isCharacters()) {
+                    String data = event.asCharacters().getData().trim();
+                    if (data.length() > 0) {
+                        if (!itClasses.containsKey(currentInputTemplate.externalid())) {
+                            itClasses.put(currentInputTemplate.externalid(), new HashSet<String>());
+                        }
+                        itClasses.get(currentInputTemplate.externalid()).add(data);
                     }
                 }
                 break;

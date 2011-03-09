@@ -2,7 +2,6 @@ package pp.eclipse.open.parse;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -44,13 +43,13 @@ public class JAXBParser implements Parser
 		}
 	}
 
-	public List<Item> parse(BufferedReader reader)
+	public ParserResult parse(BufferedReader reader)
 		throws XMLStreamException, JAXBException
 	{
 		XMLEventReader source = xmlif.createXMLEventReader(reader);
 		XMLEvent documentElement = xmlif.createFilteredReader(source, createStartFilter()).peek();
 		if (!supportedDocument(documentElement.asStartElement())) {
-			return Collections.emptyList();
+			return new ParserResult();
 		}
 		int[] lineOfContentStart = new int[1];
 		lineOfContentStart[0] = -1;
@@ -71,7 +70,7 @@ public class JAXBParser implements Parser
 			    contents.add(item);
 			}
 		}
-		return contents;
+		return new ParserResult(contents);
 	}
 
 	private Item convert(OutputTemplate element) {

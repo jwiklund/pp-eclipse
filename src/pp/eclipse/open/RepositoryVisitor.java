@@ -161,7 +161,7 @@ public class RepositoryVisitor implements IResourceProxyVisitor
             }
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(content, charset));
-                List<Item> parsed = parser.parse(reader);
+                List<Item> parsed = parser.parse(reader).items;
                 List<Item> updated = new ArrayList<Item>(parsed.size());
                 IPath fullPath = iResource.getFullPath();
                 for (Item parse : parsed) {
