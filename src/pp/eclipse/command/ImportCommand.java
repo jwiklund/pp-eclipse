@@ -2,7 +2,6 @@ package pp.eclipse.command;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -13,6 +12,11 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -26,6 +30,7 @@ import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.MessageConsole;
+import org.eclipse.ui.console.MessageConsoleStream;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import pp.eclipse.Activator;
@@ -37,28 +42,45 @@ public class ImportCommand extends AbstractHandler
 {
     final static String CONSOLE_NAME = "Import ContentXML";
 
-	public Object execute(ExecutionEvent event) throws ExecutionException
-	{
-		Object activeEditor = HandlerUtil.getVariable(event, ISources.ACTIVE_EDITOR_NAME);
-		if (activeEditor instanceof IEditorPart) {
-			IEditorInput activeInput = ((IEditorPart) activeEditor).getEditorInput();
-			if (activeInput instanceof IFileEditorInput) {
-				try {
-                    importContent(((IFileEditorInput) activeInput).getFile());
-                } catch (PartInitException e) {
-                    e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-			}
-		}
-		return null;
-	}
+    public Object execute(ExecutionEvent event) throws ExecutionException
+    {
+        Object activeEditor = HandlerUtil.getVariable(event, ISources.ACTIVE_EDITOR_NAME);
+        if (activeEditor instanceof IEditorPart) {
+            IEditorInput activeInput = ((IEditorPart) activeEditor).getEditorInput();
+            if (activeInput instanceof IFileEditorInput) {
+                Job job = new Import(((IFileEditorInput) activeInput).getFile());
+                job.setUser(true);
+                job.schedule();
+            }
+        }
+        return null;
+    }
 
-	private void importContent(IFile file) throws PartInitException, UnsupportedEncodingException
-	{
-		MessageConsole console = findConsole(CONSOLE_NAME);
-		URL url = Activator.getDefault().preferences().importUrl();
+    private class Import extends Job {
+        private final IFile file;
+
+        public Import(IFile file) {
+            super("pp.import " + file.getName());
+            this.file = file;
+        }
+
+        @Override
+        protected IStatus run(IProgressMonitor monitor) {
+            try {
+                importContent(file);
+            } catch (PartInitException e) {
+                return new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Import.PartInit: " + e.getMessage());
+            } catch (UnsupportedEncodingException e) {
+                return new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Import.Unknown Encoding");
+            }
+            return new Status(IStatus.OK, Activator.PLUGIN_ID, "Import.Success");
+        }
+    }
+
+    void importContent(IFile file) throws PartInitException, UnsupportedEncodingException
+    {
+        MessageConsole console = findConsole(CONSOLE_NAME);
+        URL url = Activator.getDefault().preferences().importUrl();
         InputStream contents = null;
         try {
             contents = file.getContents();
@@ -77,12 +99,15 @@ public class ImportCommand extends AbstractHandler
         if (charset == null) {
             charset = "UTF-8";
         }
-        PrintWriter pw = new PrintWriter(new OutputStreamWriter(console.newMessageStream(), "UTF-8"));
-        console.clearConsole();
-		show(console);
-		try {
-		    pw.println("Importing " + file.getFullPath().toString());
-		    pw.println("To " + url);
+
+        clearConsole(console);
+        show(console);
+        MessageConsoleStream stream = console.newMessageStream();
+        PrintWriter pw = new PrintWriter(stream);
+        try {
+            pw.println("Importing " + file.getFullPath().toString());
+            pw.println("To " + url);
+            pw.flush();
             ImportResult result = new ContentImporter().importContent(new Content(contents, charset), url);
             pw.println("Result");
             pw.println(handleResult(result));
@@ -92,10 +117,15 @@ public class ImportCommand extends AbstractHandler
             e.printStackTrace(pw);
         } finally {
             pw.flush();
+            try {
+                stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-	}
+    }
 
-    private String handleResult(ImportResult result)
+	private String handleResult(ImportResult result)
     {
         if (result.status >= 200 && result.status <= 300) {
             return result.data;
@@ -128,24 +158,52 @@ public class ImportCommand extends AbstractHandler
         return error;
     }
 
-    private void show(MessageConsole console) throws PartInitException
-	{
-	    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-	    String id = IConsoleConstants.ID_CONSOLE_VIEW;
-	    IConsoleView view = (IConsoleView) page.showView(id);
-	    view.display(console);
+    private void show(final MessageConsole console) throws PartInitException
+    {
+        Display.getDefault().asyncExec(new Runnable() {
+            @Override
+            public void run() {
+                IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                String id = IConsoleConstants.ID_CONSOLE_VIEW;
+                IConsoleView view;
+                try {
+                    view = (IConsoleView) page.showView(id);
+                    view.display(console);
+                } catch (PartInitException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
-    private MessageConsole findConsole(String name) {
-	    ConsolePlugin plugin = ConsolePlugin.getDefault();
-	    IConsoleManager conMan = plugin.getConsoleManager();
-	    IConsole[] existing = conMan.getConsoles();
-	    for (int i = 0; i < existing.length; i++)
-	        if (name.equals(existing[i].getName()))
-	            return (MessageConsole) existing[i];
-	    //no console found, so create a new one
-	    MessageConsole myConsole = new MessageConsole(name, null);
-	    conMan.addConsoles(new IConsole[]{myConsole});
-	    return myConsole;
-	}
+    private void clearConsole(final MessageConsole console) {
+        Display.getDefault().syncExec(new Runnable() {
+            @Override
+            public void run() {
+                console.clearConsole();
+            }
+        });
+    }
+
+    private MessageConsole findConsole(final String name) {
+        final MessageConsole[] console = new MessageConsole[1];
+        Display.getDefault().syncExec(new Runnable() {
+            @Override
+            public void run() {
+                ConsolePlugin plugin = ConsolePlugin.getDefault();
+                IConsoleManager conMan = plugin.getConsoleManager();
+                IConsole[] existing = conMan.getConsoles();
+                for (int i = 0; i < existing.length; i++)
+                    if (name.equals(existing[i].getName())) {
+                        console[0] = (MessageConsole) existing[i];
+                        return ;
+                    }
+                //no console found, so create a new one
+                MessageConsole myConsole = new MessageConsole(name, null);
+                conMan.addConsoles(new IConsole[]{myConsole});
+                console[0] = myConsole;
+            }
+        });
+        return console[0];
+    }
 }
