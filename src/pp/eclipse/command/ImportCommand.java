@@ -161,7 +161,6 @@ public class ImportCommand extends AbstractHandler
     private void show(final MessageConsole console) throws PartInitException
     {
         Display.getDefault().asyncExec(new Runnable() {
-            @Override
             public void run() {
                 IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
                 String id = IConsoleConstants.ID_CONSOLE_VIEW;
@@ -178,7 +177,6 @@ public class ImportCommand extends AbstractHandler
 
     private void clearConsole(final MessageConsole console) {
         Display.getDefault().syncExec(new Runnable() {
-            @Override
             public void run() {
                 console.clearConsole();
             }
@@ -188,7 +186,6 @@ public class ImportCommand extends AbstractHandler
     private MessageConsole findConsole(final String name) {
         final MessageConsole[] console = new MessageConsole[1];
         Display.getDefault().syncExec(new Runnable() {
-            @Override
             public void run() {
                 ConsolePlugin plugin = ConsolePlugin.getDefault();
                 IConsoleManager conMan = plugin.getConsoleManager();
