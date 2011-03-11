@@ -3,6 +3,8 @@ package pp.eclipse.open.dummy;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -63,25 +65,40 @@ public class Resource
     {
         return new Entry(filename, "");
     }
-
-    public static Entry inputTemplate(String filename, String inputTemplate, ClassReference... references)
+    
+    public static Entry templateDefinition(String fileName, Template... templates)
     {
-        return new Entry(filename, templateDefinition(inputTemplate(inputTemplate, references)));
+        return new Entry(fileName, new TemplateDefinition(Arrays.asList(templates)).toString());
     }
 
-    public static Entry outputTemplate(String filename, String outputTemplate)
+    public static InputTemplate inputTemplate(String inputTemplate, ClassReference... references)
     {
-        return new Entry(filename, templateDefinition(outputTemplate(outputTemplate)));
+        return new InputTemplate(inputTemplate, Arrays.asList(references));
+    }
+    
+    public static OutputTemplate outputTemplate(String outputTemplate)
+    {
+        return new OutputTemplate(outputTemplate);
+    }
+    
+    public static Entry batch(String filename, Content... contents)
+    {
+        return new Entry(filename, new Batch(Arrays.asList(contents)).toString());
+    }
+    
+    public static Entry batch(String filename, String externalid)
+    {
+        return batch(filename, content(externalid));
     }
 
-    public static Entry content(String filename, String externalid)
+    public static Entry batch(String filename, String externalid, String... contentreferences)
     {
-        return new Entry(filename, batch(content(externalid)));
+        return batch(filename, content(externalid, contentreferences));
     }
-
-    public static Entry content(String filename, String externalid, String... contentreferences)
+    
+    public static Content content(String externalid, String... contentReferences)
     {
-        return new Entry(filename, batch(content(externalid, contentreferences)));
+        return new Content(externalid, new ContentList(Arrays.asList(contentReferences)));
     }
 
     public static ClassReference policy(String policy) {
@@ -104,82 +121,130 @@ public class Resource
         return new ClassReference("editor", null, widget);
     }
 
-    private static String batch(String... contents)
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        sb.append("<batch xmlns=\"http://www.polopoly.com/polopoly/cm/xmlio\">\n");
-        for (String content : contents) {
-            sb.append(content);
+    public static class Batch {
+        private List<Content> contents;
+        public Batch(List<Content> contents) {
+            this.contents = contents;
         }
-        sb.append("</batch>\n");
-        return sb.toString();
-    }
-
-    private static String content(String externalid, String... contentreferences)
-    {
-        return " <content>\n" +
-               "  <metadata>\n" +
-               "   <contentid>\n" +
-               "    <major>Department</major>\n" +
-               "    <externalid>"+externalid+"</externalid>\n" +
-               "   </contentid>\n" +
-               "  </metadata>\n" +
-               contentlist("  ", contentreferences) +
-               " </content>\n";
-    }
-
-    private static String contentlist(String indent, String... contentreferences) {
-        if (contentreferences.length == 0) {
-            return "";
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append(indent).append("<contentlist>\n");
-        for (String reference : contentreferences) {
-            sb.append(indent).append(" <entry>\n");
-            sb.append(indent).append("  <metadata>\n");
-            sb.append(indent).append("   <referredContent>\n");
-            sb.append(indent).append("    <contentid>\n");
-            sb.append(indent).append("     <externalid>").append(reference).append("</externalid>");
-            sb.append(indent).append("    </contentid>\n");
-            sb.append(indent).append("   </referredContent>\n");
-            sb.append(indent).append("  </metadata>\n");
-            sb.append(indent).append(" </entry>\n");
-        }
-        sb.append(indent).append("</contentlist>\n");
-        return sb.toString();
-    }
-
-    private static String templateDefinition(String... inputTemplates) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        sb.append("<template-definition version=\"1.0\" xmlns=\"http://www.polopoly.com/polopoly/cm/app/xml\">\n");
-        for( String inputTemplate : inputTemplates) {
-            sb.append(inputTemplate);
-        }
-        sb.append("</template-definition>\n");
-        return sb.toString();
-    }
-
-    private static String inputTemplate(String inputtemplate, ClassReference... references) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(" <input-template name=\"").append(inputtemplate).append("\">\n");
-        if (references.length == 0) {
-            sb.append("  <policy>com.polopoly.cm.app.policy.SingleValuePolicy</policy>\n");
-            sb.append("  <editor>com.polopoly.cm.app.widget.OTextInputPolicyWidget</editor>\n");
-            sb.append("  <viewer>com.polopoly.cm.app.widget.OTextOutputPolicyWidget</viewer>\n");
-        } else {
-            for (ClassReference ref : references) {
-                sb.append(ref.toString());
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+            sb.append("<batch xmlns=\"http://www.polopoly.com/polopoly/cm/xmlio\">\n");
+            for (Content content : contents) {
+                sb.append(content.toString("  "));
             }
+            sb.append("</batch>\n");
+            return sb.toString();
         }
-        sb.append(" </input-template>\n");
-        return sb.toString();
+    }
+    
+    public static class Content {
+        private String externalid;
+        private ContentList contentList;
+        public Content(String externalid, ContentList contentList) {
+            this.externalid = externalid;
+            this.contentList = contentList;
+        }
+        public String toString(String indent) {
+            return indent + "<content>\n" +
+                   indent + "  <metadata>\n" +
+                   indent + "   <contentid>\n" +
+                   indent + "    <major>Department</major>\n" +
+                   indent + "    <externalid>"+externalid+"</externalid>\n" +
+                   indent + "   </contentid>\n" +
+                   indent + "  </metadata>\n" +
+                   contentList.toString(indent + "  ") +
+                   indent + " </content>\n";
+        }
+    }
+    
+    public static class ContentList {
+        private List<String> contentreferences;
+        public ContentList(List<String> contentreferences) {
+            this.contentreferences = contentreferences;
+        }
+
+        public String toString(String indent) {
+            if (contentreferences.size() == 0) {
+                return "";
+            }
+            StringBuilder sb = new StringBuilder();
+            sb.append(indent).append("<contentlist>\n");
+            for (String reference : contentreferences) {
+                sb.append(indent).append(" <entry>\n");
+                sb.append(indent).append("  <metadata>\n");
+                sb.append(indent).append("   <referredContent>\n");
+                sb.append(indent).append("    <contentid>\n");
+                sb.append(indent).append("     <externalid>").append(reference).append("</externalid>");
+                sb.append(indent).append("    </contentid>\n");
+                sb.append(indent).append("   </referredContent>\n");
+                sb.append(indent).append("  </metadata>\n");
+                sb.append(indent).append(" </entry>\n");
+            }
+            sb.append(indent).append("</contentlist>\n");
+            return sb.toString();
+        }
     }
 
-    private static String outputTemplate(String outputTemplate) {
-        return " <output-template name=\"" + outputTemplate + "\">\n"+
-               " </output-template>";
+    public static interface Template {
+        public String toString(String indent);
+    }
+    
+    public static class TemplateDefinition {
+        private List<Template> templates;
+        public TemplateDefinition(List<Template> templates) {
+            this.templates = templates;
+        }
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+            sb.append("<template-definition version=\"1.0\" xmlns=\"http://www.polopoly.com/polopoly/cm/app/xml\">\n");
+            for( Template template : templates) {
+                sb.append(template.toString("  "));
+            }
+            sb.append("</template-definition>\n");
+            return sb.toString();
+        }
+    }
+
+    public static class InputTemplate implements Template {
+        private String externalid;
+        private List<ClassReference> references;
+        public InputTemplate(String externalid, List<ClassReference> references) {
+            super();
+            this.externalid = externalid;
+            this.references = references;
+        }
+        @Override
+        public String toString(String indent) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(indent).append("<input-template name=\"").append(externalid).append("\">\n");
+            if (references.size() == 0) {
+                sb.append(indent).append("  <policy>com.polopoly.cm.app.policy.SingleValuePolicy</policy>\n");
+                sb.append(indent).append("  <editor>com.polopoly.cm.app.widget.OTextInputPolicyWidget</editor>\n");
+                sb.append(indent).append("  <viewer>com.polopoly.cm.app.widget.OTextOutputPolicyWidget</viewer>\n");
+            } else {
+                for (ClassReference ref : references) {
+                    sb.append(ref.toString(indent + "  "));
+                }
+            }
+            sb.append(" </input-template>\n");
+            return sb.toString();
+        }
+    }
+    
+    public static class OutputTemplate implements Template {
+        private String externalid;
+        public OutputTemplate(String externalid) {
+            super();
+            this.externalid = externalid;
+        }
+        @Override
+        public String toString(String indent) {
+            return indent + "<output-template name=\"" + externalid + "\">\n"+
+                   indent + "</output-template>";
+        }
     }
 
     public final static class ClassReference {
@@ -192,8 +257,8 @@ public class Resource
             this.context = context;
             this.reference = reference;
         }
-        public String toString() {
-            return "<" + type + (context == null ? "" : " contextName=\"" + context + "\"") + ">" + reference + "</" + type + ">";
+        public String toString(String indent) {
+            return indent + "<" + type + (context == null ? "" : " contextName=\"" + context + "\"") + ">" + reference + "</" + type + ">";
         }
     }
 

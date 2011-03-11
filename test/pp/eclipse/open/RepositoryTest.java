@@ -26,7 +26,7 @@ public class RepositoryTest {
 	public void testExtractExternalId()
 		throws Exception
 	{
-		IContainer root = Resource.root(Resource.content("simple.xml", "p.simple"));
+		IContainer root = Resource.root(Resource.batch("simple.xml", Resource.content("p.simple")));
 		Repository target = new Repository(root, new Preferences(new BasePreferencesStore()), new StreamParser(), new HashMap<String, List<Item>>());
 		Item externalid = new Item(ItemType.Content, "p.simple", Path.path("/simple.xml"), 7);
 		assertEquals(singletonList(new Container(Path.path("/simple.xml"), 0, singletonList(externalid))),
