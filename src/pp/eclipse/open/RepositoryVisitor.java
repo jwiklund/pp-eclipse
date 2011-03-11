@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 import pp.eclipse.open.parse.Parser;
+import pp.eclipse.open.parse.Parser.ParserResult;
 
 public class RepositoryVisitor implements IResourceProxyVisitor 
 {
@@ -161,11 +163,17 @@ public class RepositoryVisitor implements IResourceProxyVisitor
             }
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(content, charset));
-                List<Item> parsed = parser.parse(reader).items;
-                List<Item> updated = new ArrayList<Item>(parsed.size());
+                ParserResult parsed = parser.parse(reader);
+                List<Item> parsedcontents = parsed.items;
+                List<Item> updated = new ArrayList<Item>(parsedcontents.size());
                 IPath fullPath = iResource.getFullPath();
-                for (Item parse : parsed) {
+                for (Item parse : parsedcontents) {
                     updated.add(parse.path(fullPath));
+                }
+                for (Set<Item> references : parsed.references.values()) {
+                    for (Item reference : references) {
+                        updated.add(reference.path(fullPath));
+                    }
                 }
                 result = updated;
             } catch (UnsupportedEncodingException e) {
