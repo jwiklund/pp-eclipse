@@ -32,7 +32,7 @@ public class StreamParser implements Parser
     {
         XMLEventReader source = xmlif.createXMLEventReader(reader);
         List<Item> result = new ArrayList<Item>();
-        Map<String, Set<String>> itClasses = new HashMap<String, Set<String>>();
+        Map<String, Set<Item>> itClasses = new HashMap<String, Set<Item>>();
         StateHandler handler = new StateHandler(result, itClasses);
         List<QName> path = new ArrayList<QName>();
         for (; source.hasNext(); ) {
@@ -87,12 +87,12 @@ public class StreamParser implements Parser
     {
         State state = State.Initial;
         List<Item> result;
-        private Item currentInputTemplate;
-        Map<String, Set<String>> itClasses;
+        private Item currentReference;
+        Map<String, Set<Item>> references;
 
-        public StateHandler(List<Item> result, Map<String, Set<String>> itClasses) {
+        public StateHandler(List<Item> result, Map<String, Set<Item>> references) {
             this.result = result;
-            this.itClasses = itClasses;
+            this.references = references;
         }
 
         public boolean handle(List<QName> path, XMLEvent event) {
@@ -121,9 +121,9 @@ public class StreamParser implements Parser
                     if (path.get(1).equals(Elements.InputTemplate)) {
                         String externalid = getAttribute(event);
                         if (externalid != null) {
-                            currentInputTemplate = new Item(ItemType.InputTemplate, externalid, null, event.getLocation().getLineNumber());
+                            currentReference = new Item(ItemType.InputTemplate, externalid, null, event.getLocation().getLineNumber());
                             state = State.InputTemplate;
-                            result.add(currentInputTemplate);
+                            result.add(currentReference);
                         }
                     } else if (path.get(1).equals(Elements.OutputTemplate)) {
                         String externalid = getAttribute(event);
@@ -136,14 +136,15 @@ public class StreamParser implements Parser
             case InputTemplate:
                 if (event.isEndElement() && path.size() == 2) {
                     state = State.Templates;
-                    currentInputTemplate = null;
+                    currentReference = null;
                 } else if (path.size() == 3 && Elements.InputTemplateClasses.contains(path.get(2)) && event.isCharacters()) {
                     String data = event.asCharacters().getData().trim();
                     if (data.length() > 0) {
-                        if (!itClasses.containsKey(currentInputTemplate.externalid())) {
-                            itClasses.put(currentInputTemplate.externalid(), new HashSet<String>());
+                        String name = currentReference.type().getName(currentReference.externalid());
+                        if (!references.containsKey(name)) {
+                            references.put(name, new HashSet<Item>());
                         }
-                        itClasses.get(currentInputTemplate.externalid()).add(data);
+                        references.get(name).add(new Item(ItemType.Class, data, null, event.getLocation().getLineNumber()));
                     }
                 }
                 break;

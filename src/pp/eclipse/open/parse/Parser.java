@@ -14,19 +14,19 @@ import pp.eclipse.open.Item;
 public interface Parser {
     public static class ParserResult {
         public final List<Item> items;
-        public final Map<String, Set<String>> inputTemplateClasses;
+        public final Map<String, Set<Item>> references;
 
-        public ParserResult(List<Item> items, Map<String, Set<String>> inputTemplateClasses) {
+        public ParserResult(List<Item> items,  Map<String, Set<Item>> references) {
             this.items = items;
-            this.inputTemplateClasses = inputTemplateClasses;
+            this.references = references;
         }
         public ParserResult(List<Item> items) {
             this.items = items;
-            this.inputTemplateClasses = Collections.emptyMap();
+            this.references = Collections.emptyMap();
         }
         public ParserResult() {
             this.items = Collections.emptyList();
-            this.inputTemplateClasses = Collections.emptyMap();
+            this.references = Collections.emptyMap();
         }
     }
 
