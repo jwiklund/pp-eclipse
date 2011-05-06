@@ -53,6 +53,27 @@ public class Repository
 	}
 
 	public boolean validate(Item item) {
-        return true;
+	    return root.exists(item.path());
     }
+
+	public Item validateOnRestore(Item item) {
+	    Container container = cache.get(item.path().toPortableString());
+	    if (container == null) {
+	        return item;
+	    }
+	    Item bestMatch = null;
+	    for (Item containerItem : container.items) {
+	        if (containerItem.externalid().equals(item.externalid())) {
+	            if (containerItem.line() == item.line()) {
+	                return item;
+	            }
+	            if (bestMatch == null) {
+	                bestMatch = containerItem;
+	            } else if (Math.abs(bestMatch.line() - item.line()) > Math.abs(containerItem.line() - item.line())) {
+	                bestMatch = containerItem;
+	            }
+	        }
+	    }
+	    return bestMatch;
+	}
 }

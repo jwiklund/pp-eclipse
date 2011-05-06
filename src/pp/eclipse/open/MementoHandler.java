@@ -7,25 +7,27 @@ import org.eclipse.ui.IMemento;
 
 public class MementoHandler {
 
+    private final Repository repository;
     private final IContainer root;
     private final ItemType restricted;
     private final boolean required;
 
-    public MementoHandler(IContainer root, ItemType restricted, boolean required)
+    public MementoHandler(Repository repository, IContainer root, ItemType restricted, boolean required)
     {
+        this.repository = repository;
         this.root = root;
         this.restricted = restricted;
         this.required = required;
     }
 
-    public MementoHandler(IContainer root, ItemType restricted)
+    public MementoHandler(Repository repository, IContainer root, ItemType restricted)
     {
-        this(root, restricted, true);
+        this(repository, root, restricted, true);
     }
 
-    public MementoHandler(IContainer root)
+    public MementoHandler(Repository repository, IContainer root)
     {
-        this(root, null);
+        this(repository, root, null);
     }
 
     public void store(Object object, IMemento memento) {
@@ -68,6 +70,6 @@ public class MementoHandler {
         Path path = new Path(fullPath);
         if (root.findMember(path) == null)
             return null;
-        return new Item(type, extneralid, path, lineno);
+        return repository.validateOnRestore(new Item(type, extneralid, path, lineno));
     }
 }
