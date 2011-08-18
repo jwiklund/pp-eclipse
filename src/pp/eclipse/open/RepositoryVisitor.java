@@ -92,7 +92,7 @@ public class RepositoryVisitor implements IResourceProxyVisitor
         List<Item> items = hashCache.get(hash);
         if (items != null) {
             // Resource matched by hash (moved or restored from vcs)
-            container = new Container(fullPath, proxy.getModificationStamp(), hash, items);
+            container = new Container(fullPath, proxy.getModificationStamp(), hash, updatePath(items, fullPath));
             pathCache.put(portablePath, container);
             if (items.size() > 0) {
                 containers.add(container);
@@ -109,6 +109,15 @@ public class RepositoryVisitor implements IResourceProxyVisitor
             containers.add(container);
         }
         return true;
+    }
+
+    private List<Item> updatePath(List<Item> items, IPath path)
+    {
+        List<Item> copy = new ArrayList<Item>();
+        for (Item item : items) {
+            copy.add(new Item(item.type(), item.externalid(), path, item.line()));
+        }
+        return copy;
     }
 
     private boolean isIgnored(String portablePath) 
